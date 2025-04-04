@@ -1,7 +1,12 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\cathr\\source\\repos\\Laptop_eCommerce\\Laptops\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{00FCF4FC-FA90-4E7C-99C5-4B55FDF05CED}|Laptops.csproj|c:\\users\\cathr\\source\\repos\\laptop_ecommerce\\laptops\\views\\home\\cart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{00FCF4FC-FA90-4E7C-99C5-4B55FDF05CED}|Laptops.csproj|solutionrelative:views\\home\\cart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,7 +14,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -22,6 +27,19 @@
             {
               "$type": "Bookmark",
               "Name": "ST:130:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "cart.cshtml",
+              "DocumentMoniker": "C:\\Users\\cathr\\source\\repos\\Laptop_eCommerce\\Laptops\\Views\\Home\\cart.cshtml",
+              "RelativeDocumentMoniker": "Views\\Home\\cart.cshtml",
+              "ToolTip": "C:\\Users\\cathr\\source\\repos\\Laptop_eCommerce\\Laptops\\Views\\Home\\cart.cshtml*",
+              "RelativeToolTip": "Views\\Home\\cart.cshtml*",
+              "ViewState": "AQIAAA0AAAAAAAAAAAAYwDEAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-04T12:22:09.522Z",
+              "EditorCaption": ""
             }
           ]
         }
