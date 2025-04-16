@@ -17,6 +17,10 @@ namespace Laptops.Controllers
         {
             return View();
         }
+        public IActionResult LaptopDetails()
+        {
+            return View();
+        }
 
         public IActionResult Privacy()
         {
