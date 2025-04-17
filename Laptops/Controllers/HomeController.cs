@@ -26,6 +26,31 @@ namespace Laptops.Controllers
         {
             return View();
         }
+        public IActionResult ShoppingCart()
+        {
+            var cart = new ShoppingCart
+            {
+                Products = new List<Product>
+                {
+                    new Product
+                    {
+                        Name = "Dell",
+                        Description = "Intel Core i5, 8GB RAM, 512GB SSD",
+                        Price = 999.99m,
+                        ImageUrl = "/images/dell.jpg"
+                    },
+                    new Product
+                    {
+                        Name = "Lenovo Legion",
+                        Description = "AMD Ryzen 5, 16GB RAM, 1TB SSD",
+                        Price = 1199.99m,
+                        ImageUrl = "/images/legion1.jpg"
+                    }
+                }
+            };
+
+            return View(cart);
+        }
 
         public IActionResult UserDetails()
         {
