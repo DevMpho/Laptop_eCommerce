@@ -1,3 +1,4 @@
+using Laptops.Helpers;
 using Laptops.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -15,11 +16,17 @@ namespace Laptops.Controllers
 
         public IActionResult Index()
         {
+            var data = LaptopDataHelper.GetLaptopData();
+
+            ViewBag.Featured = data.Featured;
+            ViewBag.DevCreators = data.DevCreators;
+            ViewBag.BusinessOffice = data.BusinessOffice;
             return View();
         }
         public IActionResult LaptopDetails()
         {
             return View();
+            
         }
 
         public IActionResult Privacy()

@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Views\Home\cart.cshtml" />
+    <_ContentIncludedByDefault Remove="wwwroot\css\LaptopDetails.css" />
   </ItemGroup>
 
   <ItemGroup>
