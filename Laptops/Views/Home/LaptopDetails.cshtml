@@ -31,5 +31,69 @@
             </svg>
         </div>
     </header>
+
+    <div class="max-w-7xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-10">
+
+        <!-- Left: Laptop Image and Discount -->
+        <div>
+            <div class="relative mb-6">
+                <img id="mainImage" src="/images/legion1.jpg" alt="Laptop Image" class="w-full rounded-md shadow-md">
+                <div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow">
+                    SAVE R 1500
+                </div>
+            </div>
+
+            <!-- Product Gallery -->
+            <div>
+                <h2 class="text-lg font-semibold mb-2 border-b pb-1">Product Gallery</h2>
+                <div class="flex space-x-3">
+                    <img src="/images/legion1.jpg" alt="Thumb 1" class="w-20 h-16 object-cover rounded-md border cursor-pointer hover:scale-105 transition-transform" onclick="changeImage('/images/legion1.jpg')">
+                    <img src="/images/legion2.jpg" alt="Thumb 2" class="w-20 h-16 object-cover rounded-md border cursor-pointer hover:scale-105 transition-transform" onclick="changeImage('/images/legion2.jpg')">
+                    <img src="/images/dell.jpg" alt="Thumb 3" class="w-20 h-16 object-cover rounded-md border cursor-pointer hover:scale-105 transition-transform" onclick="changeImage('/images/dell.jpg')">
+                    <img src="/images/dell2.jpg" alt="Thumb 4" class="w-20 h-16 object-cover rounded-md border cursor-pointer hover:scale-105 transition-transform" onclick="changeImage('/images/dell2.jpg')">
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Details and Purchase Options -->
+        <div class="flex flex-col gap-6">
+            <!-- Product Info -->
+            <div>
+                <h1 class="text-2xl font-bold mb-2">Lenovo IdeaPad 1 Intel® Celeron®</h1>
+                <p class="text-lg font-semibold text-gray-700">N4500 8GB RAM 256GB SSD Laptop</p>
+                <p class="text-sm text-gray-500 mt-1">Product Code: 000000000010302420</p>
+            </div>
+
+            <!-- Specs -->
+            <ul class="list-disc pl-5 space-y-1 text-sm text-gray-600">
+                <li>Windows 11 Home</li>
+                <li>15.6 inch FHD display</li>
+                <li>8GB RAM and 256GB SSD storage</li>
+                <li>Intel® Celeron™ N4500 processor</li>
+                <li>Integrated Intel® UHD graphics</li>
+                <li>Full-size keyboard</li>
+                <li>Shutter protect</li>
+                <li>3 Year Warranty (Upon Registration)</li>
+            </ul>
+
+            <!-- Pricing and Actions -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <p class="text-2xl font-bold text-gray-800">R 6,499</p>
+
+                <!-- Buttons -->
+                <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <button class="bg-green-600 text-white py-2 rounded-md font-semibold hover:bg-green-700">Add to Cart</button>
+                    <button class="border border-red-500 text-red-500 py-2 rounded-md font-semibold hover:bg-red-50">Add to Wish List</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript to change main image -->
+    <script>
+        function changeImage(imagePath) {
+            document.getElementById('mainImage').src = imagePath;
+        }
+    </script>
 </body>
 </html>
