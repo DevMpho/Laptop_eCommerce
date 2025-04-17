@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Laptops.Controllers
 {
-    public class Laptop : Controller
+    public class LaptopHomepage : Controller
     {
         public IActionResult Index()
         {

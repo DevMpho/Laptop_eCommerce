@@ -23,10 +23,20 @@ namespace Laptops.Controllers
             ViewBag.BusinessOffice = data.BusinessOffice;
             return View();
         }
+
         public IActionResult LaptopDetails()
         {
             return View();
             
+        }
+        public IActionResult MSPOrders()
+        {
+            return View();
+
+        }
+        public IActionResult Login()
+        {
+            return View();
         }
 
         public IActionResult Privacy()
