@@ -37,16 +37,16 @@ namespace Laptops.Controllers
         {
             var cart = new ShoppingCart
             {
-                Products = new List<Product>
+                Products = new List<Product2>
                 {
-                    new Product
+                    new Product2
                     {
                         Name = "Dell",
                         Description = "Intel Core i5, 8GB RAM, 512GB SSD",
                         Price = 999.99m,
                         ImageUrl = "/images/dell.jpg"
                     },
-                    new Product
+                    new Product2
                     {
                         Name = "Lenovo Legion",
                         Description = "AMD Ryzen 5, 16GB RAM, 1TB SSD",
