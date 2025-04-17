@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Laptops")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7c09cee106964431ff4687fa374dce8d1a078a04")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+352a1115ffd20b283285e5baba8bae19af3b2fb8")]
 [assembly: System.Reflection.AssemblyProductAttribute("Laptops")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Laptops")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
