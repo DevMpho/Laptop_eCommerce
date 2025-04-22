@@ -20,7 +20,7 @@ namespace Laptops.Helpers
 
             var devCreators = new List<Product>
             {
-                new Product  { Name = "Lenovo ThinkPad X1 Extreme", Description = "Intel i9, RTX 3070, 1TB SSD", Price = 5500, ImageUrl = "/images/lenovo1.jpg", Brand = "Lenovo", RAM = 32, Storage = "1TB" },
+                new Product { Name = "Lenovo ThinkPad X1 Extreme", Description = "Intel i9, RTX 3070, 1TB SSD", Price = 5500, ImageUrl = "/images/lenovo1.jpg", Brand = "Lenovo", RAM = 32, Storage = "1TB" },
                 new Product { Name = "Dell XPS 15 9520", Description = "Intel i7, 16GB RAM, 1TB SSD", Price = 7300, ImageUrl = "/images/dell.jpg", Brand = "Dell", RAM = 16, Storage = "1TB" },
                 new Product { Name = "HP Spectre x360 2-in-1", Description = "Intel i5, 16GB RAM, 512GB SSD", Price = 6250, ImageUrl = "/images/lenovo2.jpg", Brand = "HP", RAM = 16, Storage = "512GB" },
                 new Product { Name = "Legion Slim 7", Description = "AMD Ryzen 7, RTX 3060, 16GB RAM, 1TB SSD", Price = 7900, ImageUrl = "/images/legion2.jpg", Brand = "Legion", RAM = 16, Storage = "1TB" }
