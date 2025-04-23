@@ -11,9 +11,14 @@
     <!-- Header -->
     <header class="bg-blue-900 text-white px-6 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
         <div class="flex items-center space-x-2">
-            <img src="/images/logo.webp" alt="mint logo" class="h-14 w-20" />
+            <a href="@Url.Action("Index", "Home")">
+                <img src="/images/logo.webp" alt="mint logo" class="h-14 w-32" />
+            </a>
         </div>
 
+        <div class="md:flex-1 flex justify-center w-full">
+            <input type="text" placeholder="search text" id="searchInput" class="w-full max-w-md px-4 py-2 rounded text-black" />
+        </div>
 
         <div class="flex items-center space-x-4">
             <button class="bg-green-500 px-4 py-2 rounded text-white text-sm hover:bg-green-600">Contact Us</button>
@@ -78,10 +83,10 @@
                 <p class="text-2xl font-bold text-gray-800">R 6,499</p>
 
                 <!-- Buttons -->
-                <a asp-action="ShoppingCart" class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <button class="bg-green-600 text-white py-2 rounded-md font-semibold hover:bg-green-700">Add to Cart</button>
                     <button class="border border-red-500 text-red-500 py-2 rounded-md font-semibold hover:bg-red-50">Add to Wish List</button>
-                </a>
+                </div>
             </div>
         </div>
     </div>

@@ -1,10 +1,17 @@
 ﻿@{
     ViewData["Title"] = "Home";
-    var featured = ViewBag.Featured as Laptops.Models.Product2;
-    var devList = ViewBag.DevCreators as List<Laptops.Models.Product2>;
-    var officeList = ViewBag.BusinessOffice as List<Laptops.Models.Product2>;
+    var featured = ViewBag.Featured as Laptops.Models.Product;
+    var devList = ViewBag.DevCreators as List<Laptops.Models.Product>;
+    var officeList = ViewBag.BusinessOffice as List<Laptops.Models.Product>;
+    
 }
-
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-dFfdf3dcZm+lHz6UcJ57Vn3ep1Zk9O9bDcyL+G8XvF/7qFo2RpT3oPfFnqC5V1NHHc6X3sBYY2zD9K+3z1Bx9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
 <div >
     <div class="bg-gradient-to-b from-[#1F44BB] via-[#EEF3FF] to-white py-20">
         <div class="max-w-7xl mx-auto px-6 md:px-12 grid md:grid-cols-2 gap-12 items-center">
@@ -131,6 +138,7 @@
     
 </div>
 
+
 <script>
 
     const searchInput = document.getElementById('searchInput');
@@ -196,4 +204,3 @@
     document.getElementById("ramFilter").addEventListener("change", applyFilters);
     document.getElementById("sortSelect").addEventListener("change", sortProducts);
 </script>
-<script src="https://cdn.tailwindcss.com"></script>
