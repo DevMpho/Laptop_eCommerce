@@ -43,3 +43,16 @@ TestResults/
 # Ignore published files
 publish/
 *.publish.xml
+
+# Visual Studio
+.vs/
+*.vsidx
+
+# Build outputs
+bin/
+obj/
+
+# Static web assets (optional, if you're using ASP.NET Core)
+**/staticwebassets*.json
+**/staticwebassets*.props
+
