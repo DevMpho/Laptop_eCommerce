@@ -1,3 +1,4 @@
+using Laptops.Helpers;
 using Laptops.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -15,9 +16,25 @@ namespace Laptops.Controllers
 
         public IActionResult Index()
         {
+            var data = LaptopDataHelper.GetLaptopData();
+
+            ViewBag.Featured = data.Featured;
+            ViewBag.DevCreators = data.DevCreators;
+            ViewBag.BusinessOffice = data.BusinessOffice;
             return View();
         }
+
         public IActionResult LaptopDetails()
+        {
+            return View();
+            
+        }
+        public IActionResult MSPOrders()
+        {
+            return View();
+
+        }
+        public IActionResult Login()
         {
             return View();
         }
@@ -25,6 +42,31 @@ namespace Laptops.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+        public IActionResult ShoppingCart()
+        {
+            var cart = new ShoppingCart
+            {
+                Products = new List<Product2>
+                {
+                    new Product2
+                    {
+                        Name = "Dell",
+                        Description = "Intel Core i5, 8GB RAM, 512GB SSD",
+                        Price = 999.99m,
+                        ImageUrl = "/images/dell.jpg"
+                    },
+                    new Product2
+                    {
+                        Name = "Lenovo Legion",
+                        Description = "AMD Ryzen 5, 16GB RAM, 1TB SSD",
+                        Price = 1199.99m,
+                        ImageUrl = "/images/legion1.jpg"
+                    }
+                }
+            };
+
+            return View(cart);
         }
 
         public IActionResult UserDetails()

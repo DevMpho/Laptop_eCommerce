@@ -1,0 +1,35 @@
+﻿@model Laptops.Models.Product
+
+<div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-colors duration-300 group cursor-pointer"
+     onclick="showDetails('@Model.Name', '@Model.ImageUrl', '@Model.Price', '@Model.Brand', '@Model.RAM', '@Model.Storage')"
+     data-name="@Model.Name"
+     data-brand="@Model.Brand"
+     data-ram="@Model.RAM"
+     data-storage="@Model.Storage">
+
+    <!-- Product Image -->
+    <img src="@Model.ImageUrl"
+         alt="@Model.Name"
+         class="w-full h-48 object-cover rounded-xl mb-4" />
+
+    <!-- Product Tags -->
+    <div class="flex flex-wrap gap-2 mb-4">
+        <span class="bg-[#73AC4B] text-white text-xs font-semibold px-3 py-1 rounded-full">@Model.Brand</span>
+        <span class="bg-[#1F44BB] text-white text-xs font-semibold px-3 py-1 rounded-full">@Model.RAM GB</span>
+        <span class="bg-[#1F44BB] text-white text-xs font-semibold px-3 py-1 rounded-full">@Model.Storage</span>
+    </div>
+
+    <!-- Product Title -->
+    <h3 class="text-lg font-bold text-gray-800">
+        @Model.Name
+    </h3>
+
+    <!-- Product Price -->
+    <p class="text-[#1F44BB] font-extrabold mt-2 text-lg">R @Model.Price</p>
+
+    <!-- View Details Button -->
+    <a asp-action="LaptopDetails"
+       class="block w-full text-center mt-4 px-5 py-3 bg-[#73AC4B] hover:bg-green-700 text-white text-sm font-semibold rounded-full shadow-sm transition-colors duration-300">
+        View Details
+    </a>
+</div>
