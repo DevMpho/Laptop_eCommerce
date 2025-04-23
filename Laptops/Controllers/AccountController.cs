@@ -55,7 +55,7 @@ namespace Laptops.Controllers
         {
             if (choice == "msp")
             {
-                return RedirectToAction("Index", "MSPOrders");
+                return RedirectToAction("MSPOrders", "Home");
             }
 
             return RedirectToAction("Index", "Home");
