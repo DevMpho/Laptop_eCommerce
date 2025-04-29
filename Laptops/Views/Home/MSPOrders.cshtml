@@ -3,3 +3,134 @@
 *@
 @{
 }
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mint Orders</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <header class="bg-[#5c7f6b] p-4 flex items-center">
+        <img src="/images/logo.webp" alt="mint logo" class="h-14 w-32" />
+        
+    </header>
+
+    <div class="text-center py-6">
+        <h2 class="text-3xl font-bold">Orders</h2>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap gap-4 justify-center mb-4 text-sm font-semibold px-4">
+        <label>
+            Order Status:
+            <select id="orderStatusFilter" class="border rounded px-2 py-1 ml-1">
+                <option value="All">All</option>
+                <option value="Processing">Processing</option>
+            </select>
+        </label>
+
+        <label>
+            Payment Status:
+            <select id="paymentStatusFilter" class="border rounded px-2 py-1 ml-1">
+                <option value="All">All</option>
+                <option value="Unpaid">Unpaid</option>
+            </select>
+        </label>
+
+        <label>
+            Sort by Date:
+            <select id="dateSort" class="border rounded px-2 py-1 ml-1">
+                <option value="Newest">Newest</option>
+                <option value="Oldest">Oldest</option>
+            </select>
+        </label>
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-x-auto px-4">
+        <table class="w-full bg-white border border-gray-300 rounded-lg text-sm text-left">
+            <thead class="bg-gray-200">
+                <tr class="text-gray-600 uppercase tracking-wider">
+                    <th class="p-2"><input type="checkbox" /></th>
+                    <th class="p-2">Order NO.</th>
+                    <th class="p-2">Date</th>
+                    <th class="p-2">Order Status</th>
+                    <th class="p-2">Payment Status</th>
+                    <th class="p-2">Order Customer</th>
+                    <th class="p-2">Total</th>
+                </tr>
+            </thead>
+            <tbody id="ordersTable">
+                <!-- Orders will be populated by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const orders = [
+          { id: "N01", date: "09/04/25 14:30", status: "Processing", payment: "Unpaid", customer: "lebo@mintgroup.net", total: "R5,999" },
+          { id: "N01", date: "09/04/25 14:30", status: "Processing", payment: "Unpaid", customer: "lebo@mintgroup.net", total: "R5,999" },
+          { id: "N02", date: "09/04/25 14:30", status: "Processing", payment: "Unpaid", customer: "lebo@mintgroup.net", total: "R5,999" },
+          { id: "N03", date: "09/04/25 14:30", status: "Processing", payment: "Unpaid", customer: "lebo@mintgroup.net", total: "R5,999" },
+          { id: "N04", date: "09/04/25 14:30", status: "Processing", payment: "Unpaid", customer: "lebo@mintgroup.net", total: "R5,999" },
+        ];
+
+        const orderStatusFilter = document.getElementById('orderStatusFilter');
+        const paymentStatusFilter = document.getElementById('paymentStatusFilter');
+        const dateSort = document.getElementById('dateSort');
+        const tableBody = document.getElementById('ordersTable');
+
+        function renderTable(data) {
+          tableBody.innerHTML = '';
+          data.forEach(order => {
+            tableBody.innerHTML += `
+              <tr class="border-t border-gray-300 hover:bg-gray-50">
+                <td class="p-2"><input type="checkbox" /></td>
+                <td class="p-2 font-bold">${order.id}</td>
+                <td class="p-2">${order.date}</td>
+                <td class="p-2">${order.status}</td>
+                <td class="p-2">${order.payment}</td>
+                <td class="p-2">${order.customer}</td>
+                <td class="p-2">${order.total}</td>
+              </tr>
+            `;
+          });
+        }
+
+        function filterAndSort() {
+          const status = orderStatusFilter.value;
+          const payment = paymentStatusFilter.value;
+          const sort = dateSort.value;
+
+          let filtered = [...orders];
+
+          if (status !== "All") {
+            filtered = filtered.filter(o => o.status === status);
+          }
+
+          if (payment !== "All") {
+            filtered = filtered.filter(o => o.payment === payment);
+          }
+
+          filtered.sort((a, b) => {
+            const d1 = new Date(a.date);
+            const d2 = new Date(b.date);
+            return sort === "Newest" ? d2 - d1 : d1 - d2;
+          });
+
+          renderTable(filtered);
+        }
+
+        orderStatusFilter.addEventListener('change', filterAndSort);
+        paymentStatusFilter.addEventListener('change', filterAndSort);
+        dateSort.addEventListener('change', filterAndSort);
+
+        // Initial render
+        filterAndSort();
+    </script>
+</body>
+</html>
+
