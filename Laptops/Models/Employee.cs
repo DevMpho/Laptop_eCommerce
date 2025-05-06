@@ -1,9 +1,11 @@
-﻿namespace Laptops.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+public class Employee
 {
-    public class Employee
-    {
-        public string Email { get; set; }
-        public string Role { get; set; } // "tech" or "employee"
-    }
+    [Key]
+    public int employee_id { get; set; }
+
+    [Required]
+    public string Email { get; set; }
 
 }

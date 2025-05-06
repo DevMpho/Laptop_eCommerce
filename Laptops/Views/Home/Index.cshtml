@@ -12,6 +12,26 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-dFfdf3dcZm+lHz6UcJ57Vn3ep1Zk9O9bDcyL+G8XvF/7qFo2RpT3oPfFnqC5V1NHHc6X3sBYY2zD9K+3z1Bx9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+<header class="bg-blue-900 text-white px-6 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+    <div class="flex items-center space-x-2">
+        <a href="@Url.Action("Index", "Home")">
+            <img src="/images/logo.webp" alt="mint logo" class="h-14 w-32" />
+        </a>
+    </div>
+
+    <div class="flex items-center space-x-4">
+        <button class="bg-green-500 px-4 py-2 rounded text-white text-sm hover:bg-green-600">Contact Us</button>
+        <!-- Profile icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        </svg>
+
+        <!-- Cart icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.293 2.293a1 1 0 00.217 1.32l.083.07a1 1 0 001.32-.217L9 14h6l1.293 2.293a1 1 0 001.32.217l.083-.07a1 1 0 00.217-1.32L17 13M7 13V6h10v7" />
+        </svg>
+    </div>
+</header>
 <div >
     <div class="bg-gradient-to-b from-[#1F44BB] via-[#EEF3FF] to-white py-20">
         <div class="max-w-7xl mx-auto px-6 md:px-12 grid md:grid-cols-2 gap-12 items-center">

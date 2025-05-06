@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Laptops.Models;
 
 namespace Laptops.Data
 {
@@ -9,5 +10,7 @@ namespace Laptops.Data
             : base(options)
         {
         }
+        public DbSet<Employee> Employees { get; set; }
     }
+
 }

@@ -1,30 +1,28 @@
-﻿using Laptops.Models;
+﻿using Laptops.Data;
+using Laptops.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace Laptops.Controllers
 {
     public class AccountController : Controller
     {
-        // Dummy users
-        private static readonly List<Employee> DummyUsers = new List<Employee>
-        {
-            new Employee { Email = "john.doe@mintgroup.net", Role = "employee" },
-            new Employee { Email = "jane.smith@mintgroup.net", Role = "employee" },
-            new Employee { Email = "sam.lee@mintgroup.net", Role = "msp" },
-            new Employee { Email = "lucy.brown@mintgroup.net", Role = "msp" }
-        };
+        private readonly ApplicationDbContext _context;
 
-        // GET: /Account/Login
+        public AccountController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public IActionResult Login()
         {
             return View();
         }
 
-        // POST: /Account/Login
         [HttpPost]
         public IActionResult Login(string email)
         {
-            var user = DummyUsers.FirstOrDefault(u => u.Email.ToLower() == email.ToLower());
+            var user = _context.Employees.FirstOrDefault(u => u.Email.ToLower() == email.ToLower());
 
             if (user == null)
             {
@@ -32,24 +30,25 @@ namespace Laptops.Controllers
                 return View();
             }
 
-            if (user.Role == "msp")
+            // Redirect based on email domain
+            if (email.ToLower().EndsWith("@mintgroupmasp.net"))
             {
                 TempData["Email"] = user.Email;
                 return RedirectToAction("MspLogin");
             }
 
-            return RedirectToAction("Index", "Home"); // For employees
+            // All other users go to Home
+            return RedirectToAction("Index", "Home");
         }
 
-        // GET: /Account/MspLogin
+
         [HttpGet]
         public IActionResult MspLogin()
         {
             ViewBag.Email = TempData["Email"];
-            return View(); // This view should have two buttons to post "choice"
+            return View();
         }
 
-        // POST: /Account/MspLogin
         [HttpPost]
         public IActionResult MspLogin(string email, string choice)
         {
