@@ -111,16 +111,7 @@
                         <option value="Legion">Legion</option>
                     </select>
                 </div>
-                <div class="flex flex-col">
-                    <label for="ram" class="text-sm font-semibold text-gray-700">RAM</label>
-                    <select id="ramFilter" class="px-3 py-2 border rounded-md text-sm focus:ring-2 focus:ring-[#1F44BB]">
-                        <option value="">All</option>
-                        <option value="4GB">4GB</option>
-                        <option value="8GB">8GB</option>
-                        <option value="16GB">16GB</option>
-                        <option value="32GB">32GB</option>
-                    </select>
-                </div>
+               
             </div>
 
             <!-- Sort -->
@@ -158,44 +149,43 @@
     
 </div>
 
-
 <script>
+    const searchInput = document.querySelector('input[placeholder*="Search"]');
+    const brandFilter = document.getElementById("brandFilter");
+    const ramFilter = document.getElementById("ramFilter");
+    const sortSelect = document.getElementById("sortSelect");
 
-    const searchInput = document.getElementById('searchInput');
-    const cards = document.querySelectorAll('.bg-white');
+    const sections = ["devCreatorsSection", "businessOfficeSection"];
 
-    searchInput.addEventListener('input', function () {
-        const query = this.value.toLowerCase();
-
-        cards.forEach(card => {
-            const combinedData = `
-                ${card.dataset.name}
-                ${card.dataset.brand}
-                ${card.dataset.ram}gb
-                ${card.dataset.storage}
-                
-            `.toLowerCase();
-
-            card.style.display = combinedData.includes(query) ? 'block' : 'none';
-    const applyFilters = () => {
-        const brand = document.getElementById("brandFilter").value;
-        const ram = document.getElementById("ramFilter").value;
-        const sections = ["devCreatorsSection", "businessOfficeSection"];
+    function applyFilters() {
+        const brand = brandFilter.value.toLowerCase();
+        const ram = ramFilter.value.toLowerCase();
+        const query = searchInput.value.toLowerCase();
 
         sections.forEach(sectionId => {
             const cards = document.querySelectorAll(`#${sectionId} > div`);
             cards.forEach(card => {
-                const matchBrand = !brand || card.dataset.brand === brand;
-                const matchRam = !ram || card.dataset.ram === ram;
+                const cardBrand = card.dataset.brand?.toLowerCase() || "";
+                const cardRam = card.dataset.ram?.toLowerCase() || "";
+                const cardName = card.dataset.name?.toLowerCase() || "";
+                const cardStorage = card.dataset.storage?.toLowerCase() || "";
 
-                card.classList.toggle("hidden", !(matchBrand && matchRam));
+                const matchesBrand = !brand || cardBrand === brand;
+                const matchesRam = !ram || cardRam === ram;
+                const matchesSearch = !query ||
+                    cardName.includes(query) ||
+                    cardBrand.includes(query) ||
+                    cardRam.includes(query) ||
+                    cardStorage.includes(query);
+
+                const shouldShow = matchesBrand && matchesRam && matchesSearch;
+                card.classList.toggle("hidden", !shouldShow);
             });
         });
-    };
+    }
 
-    const sortProducts = () => {
-        const value = document.getElementById("sortSelect").value;
-        const sections = ["devCreatorsSection", "businessOfficeSection"];
+    function sortProducts() {
+        const value = sortSelect.value;
 
         sections.forEach(sectionId => {
             const container = document.getElementById(sectionId);
@@ -218,9 +208,12 @@
 
             sorted.forEach(el => container.appendChild(el));
         });
-    };
+    }
 
-    document.getElementById("brandFilter").addEventListener("change", applyFilters);
-    document.getElementById("ramFilter").addEventListener("change", applyFilters);
-    document.getElementById("sortSelect").addEventListener("change", sortProducts);
+    // Attach events
+    brandFilter.addEventListener("change", applyFilters);
+    ramFilter.addEventListener("change", applyFilters);
+    sortSelect.addEventListener("change", sortProducts);
+    searchInput.addEventListener("input", applyFilters);
 </script>
+

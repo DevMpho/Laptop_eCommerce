@@ -4,8 +4,9 @@
      onclick="showDetails('@Model.Name', '@Model.ImageUrl', '@Model.Price', '@Model.Brand', '@Model.RAM', '@Model.Storage')"
      data-name="@Model.Name"
      data-brand="@Model.Brand"
-     data-ram="@Model.RAM"
-     data-storage="@Model.Storage">
+     data-ram="@Model.RAM GB"
+     data-storage="@Model.Storage"
+     data-price="@Model.Price">
 
     <!-- Product Image -->
     <img src="@Model.ImageUrl"
@@ -29,6 +30,7 @@
 
     <!-- View Details Button -->
     <a asp-action="LaptopDetails"
+       asp-route-id="@Model.Id"
        class="block w-full text-center mt-4 px-5 py-3 bg-[#73AC4B] hover:bg-green-700 text-white text-sm font-semibold rounded-full shadow-sm transition-colors duration-300">
         View Details
     </a>
