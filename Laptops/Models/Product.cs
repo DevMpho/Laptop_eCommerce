@@ -10,6 +10,7 @@
 
         public string Brand { get; set; }
         public string Storage { get; set; }
+
         public string Memory { get; set; }
     }
 }
