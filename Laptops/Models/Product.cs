@@ -9,7 +9,6 @@
         public string ImageUrl { get; set; }
 
         public string Brand { get; set; }
-        public int RAM { get; set; }
         public string Storage { get; set; }
         public string Memory { get; set; }
     }
