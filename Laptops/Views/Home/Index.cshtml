@@ -168,29 +168,36 @@
     const sections = ["devCreatorsSection", "businessOfficeSection"];
 
     function applyFilters() {
-        const brand = brandFilter.value.toLowerCase();
-        const ram = ramFilter.value.toLowerCase();
-        const query = searchInput.value.toLowerCase();
+        const query = searchInput.value.trim().toLowerCase();
+        const queryTokens = query.split(/\s+/); // split by spaces
 
         sections.forEach(sectionId => {
             const cards = document.querySelectorAll(`#${sectionId} > div`);
+            let anyVisible = false;
+
             cards.forEach(card => {
-                const cardBrand = card.dataset.brand?.toLowerCase() || "";
-                const cardRam = card.dataset.ram?.toLowerCase() || "";
-                const cardName = card.dataset.name?.toLowerCase() || "";
-                const cardStorage = card.dataset.storage?.toLowerCase() || "";
+                const name = card.dataset.name?.toLowerCase() || "";
+                const brand = card.dataset.brand?.toLowerCase() || "";
+                const ram = card.dataset.ram?.toLowerCase() || "";
+                const storage = card.dataset.storage?.toLowerCase() || "";
 
-                const matchesBrand = !brand || cardBrand === brand;
-                const matchesRam = !ram || cardRam === ram;
-                const matchesSearch = !query ||
-                    cardName.includes(query) ||
-                    cardBrand.includes(query) ||
-                    cardRam.includes(query) ||
-                    cardStorage.includes(query);
+                const combined = `${name} ${brand} ${ram} ${storage}`;
 
-                const shouldShow = matchesBrand && matchesRam && matchesSearch;
-                card.classList.toggle("hidden", !shouldShow);
+                const matches = queryTokens.every(token => combined.includes(token));
+
+                if (matches || queryTokens.length === 0) {
+                    card.classList.remove("hidden");
+                    anyVisible = true;
+                } else {
+                    card.classList.add("hidden");
+                }
             });
+
+            // Optional: show/hide empty message
+            const emptyMessage = document.getElementById(`${sectionId}-empty`);
+            if (emptyMessage) {
+                emptyMessage.classList.toggle("hidden", anyVisible);
+            }
         });
     }
 
