@@ -56,7 +56,3 @@ obj/
 **/staticwebassets*.json
 **/staticwebassets*.props
 
-# Configuration files
-appsettings.json
-appsettings.Development.json
-

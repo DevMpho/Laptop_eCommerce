@@ -71,7 +71,7 @@ namespace Laptops.Controllers
 
         public IActionResult UserDetails()
         {
-            var user = new UserDetails
+            /*var user = new UserDetails
             {
                 Name = "Mahlatsi Sekele",
                 Email = "mahlatsi.sekele@mintgroup.net",
@@ -86,42 +86,30 @@ namespace Laptops.Controllers
                 Storage = "512GB SSD",
                 Graphics = "Intel Iris Xe",
                 OperatingSystem = "Windows 11"
-            };
+            };*/
 
-            return View(user); // This looks for Views/Home/LaptopDetails.cshtml
+            return View(); // This looks for Views/Home/LaptopDetails.cshtml
         }
 
         public IActionResult orders()
         {
-            var orders = new List<Order>
+            var orders = new List<laptop_details>
     {
-        new Order {
-            Id = 1,
-            LaptopName = "Lenovo Legion G15",
-            Description = "Features 32GB DDR5 RAM and a 16-inch display. Priced at R3 800, it comes in silver and black and is designed for gaming and development.",
-            ImageUrl = "/images/legion-g15.png",
-            OrderDate = new DateTime(2025, 4, 14),
-            EstimatedPickupDate = new DateTime(2025, 4, 20),
-            Status = "Pending"
+        new laptop_details {
+            laptopdetails_id = 1,
+            brand = "Lenovo Legion G15",
+            
         },
-        new Order {
-            Id = 2,
-            LaptopName = "Lenovo ThinkBook",
-            Description = "Features 32GB DDR5 RAM and a 16-inch display. It comes in silver and black and is designed for gaming and development.",
-            ImageUrl = "/images/thinkbook.png",
-            OrderDate = new DateTime(2025, 4, 14),
-            EstimatedPickupDate = new DateTime(2025, 5, 3),
-            Status = "Approved"
+        new laptop_details {
+            laptopdetails_id = 1,
+            brand = "Lenovo Legion G15",
+
         },
-        new Order {
-            Id = 3,
-            LaptopName = "Lenovo Legion 5",
-            Description = "Features 32GB DDR5 RAM and a 16-inch display. The battery expectancy is around 60%.",
-            ImageUrl = "/images/legion5.png",
-            OrderDate = new DateTime(2025, 4, 14),
-            EstimatedPickupDate = new DateTime(2025, 5, 20),
-            Status = "Cancelled"
-        }
+        new laptop_details {
+            laptopdetails_id = 1,
+            brand = "Lenovo Legion G15",
+
+        },
     };
 
             return View(orders);
