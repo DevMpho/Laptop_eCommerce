@@ -1,13 +1,13 @@
 ﻿namespace Laptops.Models
 {
-    public class Order
+    public class Orders
     {
-        public int Id { get; set; }
-        public string? LaptopName { get; set; }
-        public string? Description { get; set; }
-        public string? ImageUrl { get; set; }
-        public DateTime OrderDate { get; set; }
-        public DateTime EstimatedPickupDate { get; set; }
-        public string? Status { get; set; }
+        public int order_id { get; set; }
+        public int employee_id { get; set; }
+        public DateTime order_date { get; set; }
+        public decimal totalAmount { get; set; }
+        public int status { get; set; }
+        public order_status OrderStatus { get; set; }
+        public Employee Employee { get; set; }
     }
 }

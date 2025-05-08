@@ -1,4 +1,4 @@
-﻿namespace Laptops.Models
+﻿/*namespace Laptops.Models
 {
     public class UserDetails
     {
@@ -19,3 +19,4 @@
         public string? OperatingSystem { get; set; }
     }
 }
+*/

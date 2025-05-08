@@ -8,6 +8,7 @@
         public double Price { get; set; }
         public string ImageUrl { get; set; }
 
+        public int RAM { get; set; } // in GB
         public string Brand { get; set; }
         public string Storage { get; set; }
         public string Memory { get; set; }
