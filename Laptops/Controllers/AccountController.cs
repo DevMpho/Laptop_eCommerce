@@ -28,10 +28,15 @@ namespace Laptops.Controllers
                 return View();
             }
 
-            // Perform case-insensitive comparison using ToLower()
+            // Fetch the required fields only to avoid casting issues
             var user = _context.Employees
                 .Where(u => !string.IsNullOrEmpty(u.Email) && u.Email.ToLower() == email.ToLower())
-                .Select(u => u.Email)
+                .Select(u => new
+                {
+                    u.Email,
+                    u.firstname,
+                    u.lastname
+                })
                 .FirstOrDefault();
 
             if (user == null)
@@ -40,15 +45,31 @@ namespace Laptops.Controllers
                 return View();
             }
 
+            var firstInitial = !string.IsNullOrWhiteSpace(user.firstname) ? user.firstname.Substring(0, 1).ToUpper() : "";
+            var lastInitial = !string.IsNullOrWhiteSpace(user.lastname) ? user.lastname.Substring(0, 1).ToUpper() : "";
+            var initials = firstInitial + lastInitial;
+
+            // Save to session
+            HttpContext.Session.SetString("Initials", initials);
+            HttpContext.Session.SetString("Email", user.Email);
+
             // Redirect based on email domain
-            if (email.EndsWith("@mintgroupmasp.net", StringComparison.OrdinalIgnoreCase))
+            if (user.Email.EndsWith("@mintgroupmasp.net", StringComparison.OrdinalIgnoreCase))
             {
-                TempData["Email"] = user; // user is already a string (email)
                 return RedirectToAction("MspLogin");
             }
 
-            // All other users go to Home
             return RedirectToAction("Index", "Home");
+        }
+
+
+        public IActionResult Logout()
+        {
+            // Clear all session data
+            HttpContext.Session.Clear();
+
+            // Redirect to login page
+            return RedirectToAction("Login");
         }
 
         [HttpGet]
