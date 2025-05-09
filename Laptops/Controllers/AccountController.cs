@@ -22,7 +22,17 @@ namespace Laptops.Controllers
         [HttpPost]
         public IActionResult Login(string email)
         {
-            var user = _context.Employees.FirstOrDefault(u => u.Email.ToLower() == email.ToLower());
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                ViewBag.Error = "Please enter a valid email.";
+                return View();
+            }
+
+            // Perform case-insensitive comparison using ToLower()
+            var user = _context.Employees
+                .Where(u => !string.IsNullOrEmpty(u.Email) && u.Email.ToLower() == email.ToLower())
+                .Select(u => u.Email)
+                .FirstOrDefault();
 
             if (user == null)
             {
@@ -31,16 +41,15 @@ namespace Laptops.Controllers
             }
 
             // Redirect based on email domain
-            if (email.ToLower().EndsWith("@mintgroupmasp.net"))
+            if (email.EndsWith("@mintgroupmasp.net", StringComparison.OrdinalIgnoreCase))
             {
-                TempData["Email"] = user.Email;
+                TempData["Email"] = user; // user is already a string (email)
                 return RedirectToAction("MspLogin");
             }
 
             // All other users go to Home
             return RedirectToAction("Index", "Home");
         }
-
 
         [HttpGet]
         public IActionResult MspLogin()
