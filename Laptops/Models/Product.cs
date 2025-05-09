@@ -11,7 +11,7 @@
         public int RAM { get; set; } // in GB
         public string Brand { get; set; }
         public string Storage { get; set; }
-        public int RAM { get; set; }
+        
         public string Memory { get; set; }
     }
 }
