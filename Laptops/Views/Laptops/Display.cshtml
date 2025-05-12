@@ -35,6 +35,8 @@
             <p class="text-sm text-gray-500 italic">MintGroup internal use only</p>
         </div>
 
+
+
         <!-- Right Column -->
         @if (firstLaptop != null)
         {
@@ -64,40 +66,140 @@
         }
     </div>
     </div>
-    <!-- Laptops Grid Section -->
-    @if (Model.Count() > 1)
-    {
-        <div class="mt-16 px-6 md:px-16">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-6">All Available Laptops</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                @foreach (var laptop in Model.Skip(1))
-                {
-                    <div class="bg-white rounded-xl border border-gray-200 shadow-md p-4 flex flex-col items-center text-center">
-                        <img src="@Url.Content("~/" + laptop.ImgUrl)" alt="@laptop.Model" class="w-full h-36 object-contain mb-4 rounded" />
 
+    <!-- Filters & Sort Section (Moved to Top of Laptops Grid) -->
+    <div class="max-w-7xl mx-auto mt-10 px-4">
+        <!-- 🔽 FILTERS & SORT CONTROLS FOR LAPTOPS -->
+        <div class="flex flex-wrap items-center justify-between gap-4 p-6 bg-white rounded-2xl shadow-md mb-6 border border-gray-200">
+            <!-- Filters -->
+            <div class="flex flex-wrap items-center gap-6">
+                <div class="flex flex-col">
+                    <label for="brand" class="text-sm font-semibold text-gray-700">Brand</label>
+                    <select id="brandFilter" class="px-3 py-2 border rounded-md text-sm focus:ring-2 focus:ring-[#1F44BB]">
+                        <option value="">All</option>
+                        <option value="Lenovo">Lenovo</option>
+                        <option value="Dell">Dell</option>
+                        <option value="HP">HP</option>
+                        <option value="ASUS">ASUS</option>
+                        <option value="Legion">Legion</option>
+                    </select>
+                </div>
+                <div class="flex flex-col">
+                    <label for="ram" class="text-sm font-semibold text-gray-700">RAM</label>
+                    <select id="ramFilter" class="px-3 py-2 border rounded-md text-sm focus:ring-2 focus:ring-[#1F44BB]">
+                        <option value="">All</option>
+                        <option value="4GB">4GB</option>
+                        <option value="8GB">8GB</option>
+                        <option value="16GB">16GB</option>
+                        <option value="32GB">32GB</option>
+                    </select>
+                </div>
+            </div>
 
-
-                        <div class="flex flex-wrap gap-2 justify-center mb-3">
-                            <span class="bg-[#73AC4B] text-white text-xs font-semibold px-3 py-1 rounded-full">@laptop.Brand</span>
-                            <span class="bg-blue-700 text-white text-xs font-semibold px-3 py-1 rounded-full">@laptop.Ram</span>
-                            <span class="bg-blue-700 text-white text-xs font-semibold px-3 py-1 rounded-full">@laptop.Storage</span>
-                        </div>
-
-                        <h3 class="text-base font-medium text-gray-800">@laptop.Brand @laptop.Model</h3>
-                        <p class="text-lg font-bold text-blue-700 mt-1">R @laptop.Price</p>
-
-                        <a href="#" class="group mt-4  bg-[#73AC4B] hover:bg-green-700 text-white font-semibold text-lg px-8 py-3 rounded-full hover:bg-green-600 transition-all duration-300 w-full text-center flex items-center justify-center gap-2">
-                            View Details
-                            <i class="fas fa-arrow-right transform transition-transform duration-300 group-hover:translate-x-1"></i>
-                        </a>
-
-
-                    </div>
-                }
+            <!-- Sort -->
+            <div class="flex flex-col">
+                <label for="sort" class="text-sm font-semibold text-gray-700">Sort by</label>
+                <select id="sortSelect" class="px-3 py-2 border rounded-md text-sm focus:ring-2 focus:ring-[#73AC4B]">
+                    <option value="default">Default</option>
+                    <option value="price-low-high">Price: Low to High</option>
+                    <option value="price-high-low">Price: High to Low</option>
+                    <option value="name-asc">Name: A-Z</option>
+                    <option value="name-desc">Name: Z-A</option>
+                </select>
             </div>
         </div>
-    }
+    </div>
+
+        <!-- Laptops Grid Section -->
+        @if (Model.Count() > 1)
+        {
+            <div class="mt-16 px-6 md:px-16">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6">All Available Laptops</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                    @foreach (var laptop in Model.Skip(1))
+                    {
+                        <div class="bg-white rounded-xl border border-gray-200 shadow-md p-4 flex flex-col items-center text-center laptop-card"
+                             data-brand="@laptop.Brand"
+                             data-ram="@laptop.Ram"
+                             data-name="@($"{laptop.Brand} {laptop.Model}")"
+                             data-price="@laptop.Price">
+
+                            <img src="@Url.Content("~/" + laptop.ImgUrl)" alt="@laptop.Model" class="w-full h-36 object-contain mb-4 rounded" />
+
+                            <div class="flex flex-wrap gap-2 justify-center mb-3">
+                                <span class="bg-[#73AC4B] text-white text-xs font-semibold px-3 py-1 rounded-full">@laptop.Brand</span>
+                                <span class="bg-blue-700 text-white text-xs font-semibold px-3 py-1 rounded-full">@laptop.Ram</span>
+                                <span class="bg-blue-700 text-white text-xs font-semibold px-3 py-1 rounded-full">@laptop.Storage</span>
+                            </div>
+
+                            <h3 class="text-base font-medium text-gray-800">@laptop.Brand @laptop.Model</h3>
+                            <p class="text-lg font-bold text-blue-700 mt-1">R @laptop.Price</p>
+
+                            <a href="#" class="group mt-4 bg-[#73AC4B] hover:bg-green-700 text-white font-semibold text-lg px-8 py-3 rounded-full hover:bg-green-600 transition-all duration-300 w-full text-center flex items-center justify-center gap-2">
+                                View Details
+                                <i class="fas fa-arrow-right transform transition-transform duration-300 group-hover:translate-x-1"></i>
+                            </a>
+
+                        </div>
+                    }
+                </div>
+            </div>
+        }
 
 
 </body>
 </html>
+
+<script>
+    const brandFilter = document.getElementById("brandFilter");
+    const ramFilter = document.getElementById("ramFilter");
+    const sortSelect = document.getElementById("sortSelect");
+
+    function filterAndSortLaptops() {
+        const brand = brandFilter.value.toLowerCase();
+        const ram = ramFilter.value.toLowerCase();
+        const sort = sortSelect.value;
+
+        const cards = Array.from(document.querySelectorAll(".laptop-card"));
+
+        cards.forEach(card => {
+            const cardBrand = card.dataset.brand.toLowerCase();
+            const cardRam = card.dataset.ram.toLowerCase();
+
+            const show = (!brand || cardBrand === brand) && (!ram || cardRam === ram);
+            card.style.display = show ? "flex" : "none";
+        });
+
+        // Sort logic
+        const container = document.querySelector(".grid");
+        const visibleCards = cards.filter(card => card.style.display !== "none");
+
+        visibleCards.sort((a, b) => {
+            const aName = a.dataset.name.toLowerCase();
+            const bName = b.dataset.name.toLowerCase();
+            const aPrice = parseFloat(a.dataset.price);
+            const bPrice = parseFloat(b.dataset.price);
+
+            switch (sort) {
+                case "price-low-high":
+                    return aPrice - bPrice;
+                case "price-high-low":
+                    return bPrice - aPrice;
+                case "name-asc":
+                    return aName.localeCompare(bName);
+                case "name-desc":
+                    return bName.localeCompare(aName);
+                default:
+                    return 0;
+            }
+        });
+
+        // Reorder cards in the DOM
+        visibleCards.forEach(card => container.appendChild(card));
+    }
+
+    brandFilter.addEventListener("change", filterAndSortLaptops);
+    ramFilter.addEventListener("change", filterAndSortLaptops);
+    sortSelect.addEventListener("change", filterAndSortLaptops);
+</script>
+
