@@ -14,16 +14,8 @@ namespace Laptops.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
-        {
-            var data = LaptopDataHelper.GetLaptopData();
 
-            ViewBag.Featured = data.Featured;
-            ViewBag.DevCreators = data.DevCreators;
-            ViewBag.BusinessOffice = data.BusinessOffice;
-            return View();
-        }
-
+        
         public IActionResult LaptopDetails()
         {
             return View();
@@ -43,6 +35,7 @@ namespace Laptops.Controllers
         {
             return View();
         }
+        
 
         public IActionResult Privacy()
         {

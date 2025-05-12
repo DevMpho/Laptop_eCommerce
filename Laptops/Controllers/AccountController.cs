@@ -59,7 +59,7 @@ namespace Laptops.Controllers
                 return RedirectToAction("MspLogin");
             }
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Display", "Laptops");
         }
 
 
@@ -87,7 +87,7 @@ namespace Laptops.Controllers
                 return RedirectToAction("MSPOrders", "Home");
             }
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Display", "Laptops");
         }
     }
 }
