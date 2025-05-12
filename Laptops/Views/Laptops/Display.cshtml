@@ -26,8 +26,8 @@
                 <span class="text-green-600 font-medium">IT-approved laptops</span>. Every device is verified. Every listing is limited.
             </p>
             <div class="relative max-w-md mx-auto md:mx-0">
-                <input type="text" placeholder="Search by brand, RAM, or keyword..."
-                       class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <input type="text" id="searchInput" placeholder="Search by brand, RAM, or keyword..."
+                           class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 <div class="absolute top-2.5 left-3 text-gray-400">
                     <i class="fas fa-search"></i>
                 </div>
@@ -158,19 +158,32 @@
     const brandFilter = document.getElementById("brandFilter");
     const ramFilter = document.getElementById("ramFilter");
     const sortSelect = document.getElementById("sortSelect");
+    const searchInput = document.getElementById("searchInput");
 
     function filterAndSortLaptops() {
         const brand = brandFilter.value.toLowerCase();
         const ram = ramFilter.value.toLowerCase();
         const sort = sortSelect.value;
+        const search = searchInput.value.toLowerCase();
 
         const cards = Array.from(document.querySelectorAll(".laptop-card"));
 
         cards.forEach(card => {
             const cardBrand = card.dataset.brand.toLowerCase();
             const cardRam = card.dataset.ram.toLowerCase();
+            const cardName = card.dataset.name.toLowerCase();
+            const cardPrice = card.dataset.price.toLowerCase();
 
-            const show = (!brand || cardBrand === brand) && (!ram || cardRam === ram);
+            const matchesBrand = !brand || cardBrand === brand;
+            const matchesRam = !ram || cardRam === ram;
+            const matchesSearch =
+                !search ||
+                cardBrand.includes(search) ||
+                cardRam.includes(search) ||
+                cardName.includes(search) ||
+                cardPrice.includes(search);
+
+            const show = matchesBrand && matchesRam && matchesSearch;
             card.style.display = show ? "flex" : "none";
         });
 
@@ -198,12 +211,11 @@
             }
         });
 
-        // Reorder cards in the DOM
         visibleCards.forEach(card => container.appendChild(card));
     }
 
     brandFilter.addEventListener("change", filterAndSortLaptops);
     ramFilter.addEventListener("change", filterAndSortLaptops);
     sortSelect.addEventListener("change", filterAndSortLaptops);
+    searchInput.addEventListener("input", filterAndSortLaptops);
 </script>
-
