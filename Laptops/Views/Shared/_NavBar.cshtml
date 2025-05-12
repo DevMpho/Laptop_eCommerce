@@ -1,46 +1,62 @@
-﻿@{
+@{
     var initials = Context.Session.GetString("Initials") ?? "NA";
     var email = Context.Session.GetString("Email") ?? "Not logged in";
 }
 
-<header class="bg-blue-900 text-white px-6 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-    <div class="flex items-center space-x-2">
-        <a href="@Url.Action("Index", "Home")">
+<header class="bg-blue-900 text-white px-6 py-3">
+    <div class="flex flex-wrap items-center justify-between">
+        <!-- Logo -->
+        <a href="@Url.Action("Index", "Home")" class="flex items-center space-x-2">
             <img src="/images/logo.webp" alt="mint logo" class="h-14 w-32" />
         </a>
-    </div>
 
-    <div class="flex items-center space-x-4">
-        <a asp-action="ContactUs" class= "bg-green-500 px-4 py-2 rounded text-white text-sm hover:bg-green-600">Contact Us</a>
-        <!-- Profile icon -->
-        <div class="relative group profile-container">
-            @if (initials == "NA")
+        <!-- Mobile toggle placeholder (optional) -->
+        <!-- You can include a menu toggle button here if needed -->
+        <!-- Main Nav Area -->
+        <div class="flex items-center space-x-6 mt-4 md:mt-0 md:ml-auto">
+            <!-- Contact Us -->
+            <a asp-action="ContactUs" class="bg-green-500 px-4 py-2 rounded text-white text-sm hover:bg-green-600 transition-colors duration-200">
+                Contact Us
+            </a>
+
+            <!-- Profile Initials -->
+            @if (initials != "NA")
             {
-                <!-- Original fallback SVG icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="size-6">...</svg>
+                <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold cursor-default" title="@email">
+                    @initials
+                </div>
             }
             else
             {
-                <div class="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-105" title="@email">
-                    @initials
-                </div>
-
-                <!-- Dropdown menu -->
-                <div class="absolute right-0 mt-2 hidden group-hover:block dropdown-menu bg-white dark:bg-gray-800 shadow-lg rounded-lg z-50 text-sm min-w-[150px] transition-all duration-300 ease-in-out opacity-0 group-hover:opacity-100">
-                    <div class="px-4 py-2 text-gray-700 dark:text-white border-b border-gray-200 dark:border-gray-600">@email</div>
-                    <a href="@Url.Action("Logout", "Account")" class="block px-4 py-2 text-red-600 hover:bg-red-100 dark:hover:bg-red-900 transition-colors duration-200">Logout</a>
-                </div>
+                <!-- Fallback Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z" />
+                </svg>
             }
-        </div>
 
-        <!-- Cart icon -->
-        <a asp-action="ShoppingCart">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.293 2.293a1 1 0 00.217 1.32l.083.07a1 1 0 001.32-.217L9 14h6l1.293 2.293a1 1 0 001.32.217l.083-.07a1 1 0 00.217-1.32L17 13M7 13V6h10v7" />
-            </svg>
-        </a>
+            <!-- Shopping Cart Icon (Enlarged) -->
+            <a asp-action="ShoppingCart" class="relative">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-7 h-7 text-white hover:text-green-400 transition">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.293 2.293a1 1 0 00.217 1.32l.083.07a1 1 0 001.32-.217L9 14h6l1.293 2.293a1 1 0 001.32.217l.083-.07a1 1 0 00.217-1.32L17 13M7 13V6h10v7" />
+                </svg>
+            </a>
+
+            <!-- Logout Icon with Tooltip -->
+            <div class="relative group">
+                <a href="@Url.Action("Logout", "Account")" class="text-white hover:text-red-500 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <title>Logout</title>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
+                    </svg>
+                </a>
+                <div class="absolute right-0 top-8 opacity-0 group-hover:opacity-100 bg-gray-800 text-white text-xs px-2 py-1 rounded shadow transition duration-200">
+                    Logout
+                </div>
+            </div>
+        </div>
     </div>
 </header>
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
