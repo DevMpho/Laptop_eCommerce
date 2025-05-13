@@ -217,5 +217,16 @@
     brandFilter.addEventListener("change", filterAndSortLaptops);
     ramFilter.addEventListener("change", filterAndSortLaptops);
     sortSelect.addEventListener("change", filterAndSortLaptops);
-    searchInput.addEventListener("input", filterAndSortLaptops);
+    searchInput.addEventListener("input", () => {
+    filterAndSortLaptops();
+
+    const query = searchInput.value.trim();
+    if (query.length > 0) {
+        const resultsSection = document.querySelector(".grid");
+        if (resultsSection) {
+            resultsSection.scrollIntoView({ behavior: "smooth" });
+        }
+    }
+});
+
 </script>
