@@ -11,13 +11,21 @@
         </a>
 
         <!-- Mobile toggle placeholder (optional) -->
-        <!-- You can include a menu toggle button here if needed -->
+        <!-- You can include a menu toggle button here if needed -->  
         <!-- Main Nav Area -->
         <div class="flex items-center space-x-6 mt-4 md:mt-0 md:ml-auto">
+
+            <!-- View Laptops -->
+            <a asp-controller="Laptops" asp-action="Display" class="bg-green-500 px-4 py-2 rounded text-white text-sm hover:bg-green-600 transition-colors duration-200">
+                View Laptops
+            </a>
             <!-- Contact Us -->
-            <a asp-action="ContactUs" class="bg-green-500 px-4 py-2 rounded text-white text-sm hover:bg-green-600 transition-colors duration-200">
+            <a asp-controller="Home" asp-action="ContactUs" class="bg-green-500 px-4 py-2 rounded text-white text-sm hover:bg-green-600 transition-colors duration-200">
                 Contact Us
             </a>
+
+            
+
 
             <!-- Profile Initials -->
             @if (initials != "NA")
