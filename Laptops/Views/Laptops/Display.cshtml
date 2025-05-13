@@ -79,19 +79,27 @@
                         <option value="">All</option>
                         <option value="Lenovo">Lenovo</option>
                         <option value="Dell">Dell</option>
-                        <option value="HP">HP</option>
-                        <option value="ASUS">ASUS</option>
-                        <option value="Legion">Legion</option>
+                        
                     </select>
                 </div>
                 <div class="flex flex-col">
                     <label for="ram" class="text-sm font-semibold text-gray-700">RAM</label>
                     <select id="ramFilter" class="px-3 py-2 border rounded-md text-sm focus:ring-2 focus:ring-[#1F44BB]">
                         <option value="">All</option>
-                        <option value="4GB">4GB</option>
                         <option value="8GB">8GB</option>
                         <option value="16GB">16GB</option>
                         <option value="32GB">32GB</option>
+                    </select>
+                </div>
+
+                <div class="flex flex-col">
+                    <label for="role" class="text-sm font-semibold text-gray-700">Role</label>
+                    <select id="roleFilter" class="px-3 py-2 border rounded-md text-sm focus:ring-2 focus:ring-[#1F44BB]">
+                        <option value="">All</option>
+                        <option value="Gamer">Gamer</option>
+                        <option value="Business">Business</option>
+                        <option value="Developer">Developer</option>
+                        <option value="General Use">General Use</option>
                     </select>
                 </div>
             </div>
@@ -121,8 +129,10 @@
                         <div class="bg-white rounded-xl border border-gray-200 shadow-md p-4 flex flex-col items-center text-center laptop-card"
                              data-brand="@laptop.Brand"
                              data-ram="@laptop.Ram"
+                            data-role="@laptop.Role"
                              data-name="@($"{laptop.Brand} {laptop.Model}")"
                              data-price="@laptop.Price">
+                            
 
                             <img src="@Url.Content("~/" + laptop.ImgUrl)" alt="@laptop.Model" class="w-full h-36 object-contain mb-4 rounded" />
 
@@ -157,12 +167,14 @@
 <script>
     const brandFilter = document.getElementById("brandFilter");
     const ramFilter = document.getElementById("ramFilter");
+    const roleFilter = document.getElementById("roleFilter");
     const sortSelect = document.getElementById("sortSelect");
     const searchInput = document.getElementById("searchInput");
 
     function filterAndSortLaptops() {
         const brand = brandFilter.value.toLowerCase();
         const ram = ramFilter.value.toLowerCase();
+        const role = roleFilter.value.toLowerCase();
         const sort = sortSelect.value;
         const search = searchInput.value.toLowerCase();
 
@@ -171,19 +183,22 @@
         cards.forEach(card => {
             const cardBrand = card.dataset.brand.toLowerCase();
             const cardRam = card.dataset.ram.toLowerCase();
+            const cardRole = card.dataset.role.toLowerCase();
             const cardName = card.dataset.name.toLowerCase();
             const cardPrice = card.dataset.price.toLowerCase();
 
             const matchesBrand = !brand || cardBrand === brand;
             const matchesRam = !ram || cardRam === ram;
+            const matchesRole = !role || cardRole === role;
             const matchesSearch =
                 !search ||
                 cardBrand.includes(search) ||
                 cardRam.includes(search) ||
+                cardRole.includes(search) ||
                 cardName.includes(search) ||
                 cardPrice.includes(search);
 
-            const show = matchesBrand && matchesRam && matchesSearch;
+            const show = matchesBrand && matchesRam && matchesRole && matchesSearch;
             card.style.display = show ? "flex" : "none";
         });
 
@@ -216,6 +231,7 @@
 
     brandFilter.addEventListener("change", filterAndSortLaptops);
     ramFilter.addEventListener("change", filterAndSortLaptops);
+    roleFilter.addEventListener("change", filterAndSortLaptops);
     sortSelect.addEventListener("change", filterAndSortLaptops);
     searchInput.addEventListener("input", filterAndSortLaptops);
 </script>
