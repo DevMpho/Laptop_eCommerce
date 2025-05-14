@@ -24,6 +24,7 @@ namespace Laptops.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Table name mappings
             modelBuilder.Entity<Employee>().ToTable("employees");
             modelBuilder.Entity<employee_cart>().ToTable("employee_cart");
             modelBuilder.Entity<Orders>().ToTable("Orders");
@@ -32,6 +33,38 @@ namespace Laptops.Data
             modelBuilder.Entity<laptops>().ToTable("Laptops");
             modelBuilder.Entity<cart_item_status>().ToTable("cart_item_status");
             modelBuilder.Entity<cart_items>().ToTable("cart_items");
+
+            // ✅ Relationship configurations to prevent EF from guessing wrong column names
+            modelBuilder.Entity<cart_items>()
+                .HasOne(ci => ci.Order)
+                .WithMany()
+                .HasForeignKey(ci => ci.order_id);
+
+            modelBuilder.Entity<cart_items>()
+                .HasOne(ci => ci.EmployeeCart)
+                .WithMany()
+                .HasForeignKey(ci => ci.employeecart_id);
+
+            modelBuilder.Entity<cart_items>()
+                .HasOne(ci => ci.CartItemStatus)
+                .WithMany()
+                .HasForeignKey(ci => ci.status_id);
+
+            modelBuilder.Entity<cart_items>()
+                .HasOne(ci => ci.Laptop)
+                .WithMany()
+                .HasForeignKey(ci => ci.laptops_id);
+
+            modelBuilder.Entity<Orders>()
+                .HasOne(o => o.Employee)
+                .WithMany()
+                .HasForeignKey(o => o.employee_id);
+
+            modelBuilder.Entity<Orders>()
+                .HasOne(o => o.OrderStatus)
+                .WithMany()
+                .HasForeignKey(o => o.status);
         }
+
     }
 }

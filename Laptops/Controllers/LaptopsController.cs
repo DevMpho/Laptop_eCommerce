@@ -1,36 +1,52 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Laptops.Data;
 using Laptops.Models;
-
 
 namespace Laptops.Controllers
 {
     public class LaptopsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly LaptopService _laptopService;
+        private readonly ILogger<LaptopsController> _logger;
+        List<LaptopViewModel> laptops;
 
-        public LaptopsController(ApplicationDbContext context)
+        public LaptopsController(LaptopService laptopService, ILogger<LaptopsController> logger)
         {
-            _context = context;
+            _laptopService = laptopService;
+            _logger = logger;
         }
 
+
+        // Display the list of laptops
         public async Task<IActionResult> Display()
         {
-            var laptops = await _context.Laptops
-                .Include(l => l.LaptopDetails)
-                .Select(l => new LaptopViewModel
-                {
-                    Price = l.price,
-                    ImgUrl = l.imgUrl,
-                    Brand = l.LaptopDetails.brand,
-                    Model = l.LaptopDetails.model,
-                    Storage = l.LaptopDetails.storage,
-                    Ram = l.LaptopDetails.ram
-                })
-                .ToListAsync();
+            if(laptops == null)
+            {
+                laptops = await _laptopService.GetLaptopsAsync();
+            }
+            else
+            {
+                _logger.LogInformation("Using cached laptop data");
+            }
 
-            return View("Display", laptops); // This loads Views/Laptops/Display.cshtml
+           
+            return View("Display", laptops);  // Loads Views/Laptops/Display.cshtml
+        }
+
+        // Show details for a single laptop (called when clicking "View Details")
+        public async Task<IActionResult> Details(int id)
+        {
+            _logger.LogInformation($"🔍 Loading details for laptop ID: {id}");
+
+            laptops = await _laptopService.GetLaptopsAsync();
+            var laptop = laptops.FirstOrDefault(l => l.LaptopId == id);
+
+            if (laptop == null)
+            {
+                _logger.LogWarning($"Laptop with ID: {id} not found.");
+                return NotFound("Laptop not found");
+            }
+
+            return PartialView("_LaptopDetails", laptop);  // Returns the partial view with laptop details
         }
     }
 }

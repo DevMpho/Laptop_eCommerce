@@ -1,4 +1,5 @@
 using Laptops.Data;
+using Laptops.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,7 +24,15 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddMemoryCache();
+builder.Services.AddScoped<LaptopService>();
+builder.Services.AddLogging();
+builder.Services.AddScoped<LaptopStatusHelper>();
 
+// Configure logging
+builder.Logging.ClearProviders();  // Clear default providers to avoid duplicate logs
+builder.Logging.AddConsole();      // Enable console logging
+builder.Logging.SetMinimumLevel(LogLevel.Information);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

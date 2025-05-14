@@ -14,7 +14,7 @@ namespace Laptops.Models
         public int laptopdetails_id { get; set; }
 
         public int price { get; set; }
-        public int? batteryLife { get; set; }
+        public int batteryLife { get; set; }
         public string? screensize { get; set; }
         public string? description { get; set; }
         public string? color { get; set; }

@@ -1,0 +1,2 @@
+﻿USE LAPTOPSALES;
+SELECT * FROM employees;
