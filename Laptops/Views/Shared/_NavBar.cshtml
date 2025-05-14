@@ -66,19 +66,3 @@
 </header>
 
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const profileContainer = document.querySelector(".profile-container");
-        const dropdownMenu = profileContainer.querySelector(".dropdown-menu");
-
-        profileContainer.addEventListener("click", function () {
-            dropdownMenu.classList.toggle("block");
-        });
-
-        document.addEventListener("click", function (e) {
-            if (!profileContainer.contains(e.target)) {
-                dropdownMenu.classList.remove("block");
-            }
-        });
-    });
-</script>

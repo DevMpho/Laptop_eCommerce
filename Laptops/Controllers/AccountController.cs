@@ -35,7 +35,8 @@ namespace Laptops.Controllers
                 {
                     u.Email,
                     u.firstname,
-                    u.lastname
+                    u.lastname,
+                    u.employee_id
                 })
                 .FirstOrDefault();
 
@@ -52,6 +53,8 @@ namespace Laptops.Controllers
             // Save to session
             HttpContext.Session.SetString("Initials", initials);
             HttpContext.Session.SetString("Email", user.Email);
+            HttpContext.Session.SetString("EmployeeId", user.employee_id.ToString());
+
 
             // Redirect based on email domain
             if (user.Email.EndsWith("@mintgroupmasp.net", StringComparison.OrdinalIgnoreCase))
