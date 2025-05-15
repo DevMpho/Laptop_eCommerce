@@ -14,7 +14,7 @@
         public int BatteryLife { get; set; }
         public int LaptopId { get; set; }
 
-        public string Role { get; set; }
+        public string? Role { get; set; }
 
         public int userLaptopStatus { get; set; } // 0 = available, 1 = in bascket
     }
