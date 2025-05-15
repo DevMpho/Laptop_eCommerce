@@ -40,7 +40,7 @@
             <!-- Right Column -->
             @if (firstLaptop != null)
             {
-                <div class="md:w-1/2 bg-white rounded-2xl shadow-lg p-6 w-full max-w-md laptop-card"
+                <div class="md:w-1/2 bg-white rounded-2xl shadow-lg p-6 w-full max-w-md"
                      data-brand="@firstLaptop.Brand" data-ram="@firstLaptop.Ram" data-price="@firstLaptop.Price"
                      data-imgurl="@firstLaptop.ImgUrl" data-model="@firstLaptop.Model" data-storage="@firstLaptop.Storage"
                      data-screensize="@firstLaptop.ScreenSize" data-color="@firstLaptop.Color"
@@ -72,7 +72,7 @@
         </div>
     </div>
 
-    <!-- Filters & Sort Section (Moved to Top of Laptops Grid) -->
+    <!-- Filters & Sort Section -->
     <div class="max-w-7xl mx-auto mt-10 px-4">
        
         <div class="flex flex-wrap items-center justify-between gap-4 p-6 bg-white rounded-2xl shadow-md mb-6 border border-gray-200">
@@ -130,22 +130,24 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 @foreach (var laptop in Model)
                 {
-                    <div class="bg-white rounded-xl border shadow-md p-4 text-center laptop-card"
-                         data-brand="@laptop.Brand" data-ram="@laptop.Ram" data-price="@laptop.Price"
-                         data-imgurl="@laptop.ImgUrl" data-model="@laptop.Model" data-storage="@laptop.Storage"
-                         data-screensize="@laptop.ScreenSize" data-color="@laptop.Color"
-                         data-description="@laptop.Description" data-laptopid="@laptop.LaptopId" data-batterycondition="@laptop.BatteryLife">
+                <div class="bg-white rounded-xl border shadow-md p-4 text-center laptop-card"
+                     data-brand="@laptop.Brand" data-ram="@laptop.Ram" data-price="@laptop.Price"
+                     data-imgurl="@laptop.ImgUrl" data-model="@laptop.Model" data-storage="@laptop.Storage"
+                     data-screensize="@laptop.ScreenSize" data-color="@laptop.Color"
+                     data-description="@laptop.Description" data-laptopid="@laptop.LaptopId"
+                     data-batterycondition="@laptop.BatteryLife" data-role="@laptop.Role">
+
 
                         <img src="@Url.Content("~/" + laptop.ImgUrl)" alt="@laptop.Model" class="w-full h-36 object-contain mb-4 rounded" />
 
-                    <div class="flex flex-wrap gap-2 justify-center mb-3">
-                        <span class="bg-[#73AC4B] text-white text-xs font-semibold px-3 py-1 rounded-full">@laptop.Brand</span>
-                        <span class="bg-blue-700 text-white text-xs font-semibold px-3 py-1 rounded-full">@laptop.Ram</span>
-                        <span class="bg-blue-700 text-white text-xs font-semibold px-3 py-1 rounded-full">@laptop.Storage</span>
-                    </div>
+                        <div class="flex flex-wrap gap-2 justify-center mb-3">
+                            <span class="bg-[#73AC4B] text-white text-xs font-semibold px-3 py-1 rounded-full">@laptop.Brand</span>
+                            <span class="bg-blue-700 text-white text-xs font-semibold px-3 py-1 rounded-full">@laptop.Ram</span>
+                            <span class="bg-blue-700 text-white text-xs font-semibold px-3 py-1 rounded-full">@laptop.Storage</span>
+                        </div>
 
-                    <h3 class="text-base font-medium text-gray-800">@laptop.Brand @laptop.Model</h3>
-                    <p class="text-lg font-bold text-blue-700 mt-1">R @laptop.Price</p>
+                        <h3 class="text-base font-medium text-gray-800">@laptop.Brand @laptop.Model</h3>
+                        <p class="text-lg font-bold text-blue-700 mt-1">R @laptop.Price</p>
 
                         <button class="mt-4 bg-[#73AC4B] hover:bg-green-700 text-white font-semibold text-lg px-8 py-3 rounded-full hover:bg-green-600 transition-all duration-300 w-full text-center flex items-center justify-center gap-2 view-details-btn hover:bg-blue-800 transition-all">
                             View Details
@@ -201,6 +203,10 @@
                         <div><i class="fas fa-laptop text-indigo-600 mr-2"></i><strong>Screen Size:</strong> <span id="modalScreenSize"></span></div>
                         <div><i class="fas fa-palette text-pink-500 mr-2"></i><strong>Color:</strong> <span id="modalColor"></span></div>
                         <div><i class="fas fa-tachometer-alt text-gray-600 mr-2"></i><strong>Battery Condition:</strong> <span id="modalBatteryCondition" class="font-semibold px-2 py-1 rounded text-sm"></span></div>
+                        <div id="modalRoleContainer">
+                            <i id="modalRoleIcon" class="mr-2"></i><strong>Role:</strong> <span id="modalRole"></span>
+                        </div>
+
                     </div>
 
                     <!-- Description -->
@@ -219,9 +225,11 @@
 
                         <!-- Buttons -->
                         <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <a asp-action="Display" class="text-center border border-green-600 text-green-600 py-2 rounded-md font-semibold hover:bg-red-50 flex items-center justify-center gap-2">
+                            <a asp-action="Display"
+                               class="block md:hidden text-center border border-green-600 text-green-600 py-2 rounded-md font-semibold hover:bg-red-50 flex items-center justify-center gap-2">
                                 <i class="fas fa-arrow-left"></i> Back To Home
                             </a>
+
                             <a asp-action="ShoppingCart" class="text-center bg-green-600 text-white py-2 rounded-md font-semibold hover:bg-green-700 flex items-center justify-center gap-2">
                                 <i class="fas fa-shopping-cart"></i> Add to Cart
                             </a>
@@ -234,160 +242,166 @@
     </div>
 
 
-
-
     <div class="mt-20">
         @Html.Partial("footer")
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
+             document.addEventListener("DOMContentLoaded", () => {
             const brandFilter = document.getElementById("brandFilter");
             const ramFilter = document.getElementById("ramFilter");
             const roleFilter = document.getElementById("roleFilter");
             const sortSelect = document.getElementById("sortSelect");
             const searchInput = document.getElementById("searchInput");
-
-            function filterAndSortLaptops() {
-                const brand = brandFilter.value.toLowerCase();
-                const ram = ramFilter.value.toLowerCase();
-                const role = roleFilter.value.toLowerCase();
-                const sort = sortSelect.value;
-                const search = searchInput.value.toLowerCase();
-
-                const cards = Array.from(document.querySelectorAll(".laptop-card"));
-
-                cards.forEach(card => {
-                    const cardBrand = card.dataset.brand.toLowerCase();
-                    const cardRam = card.dataset.ram.toLowerCase();
-                    const cardRole = card.dataset.role.toLowerCase();
-                    const cardName = card.dataset.name.toLowerCase();
-                    const cardPrice = card.dataset.price.toLowerCase();
-
-                    const matchesBrand = !brand || cardBrand === brand;
-                    const matchesRam = !ram || cardRam === ram;
-                    const matchesRole = !role || cardRole === role;
-                    const matchesSearch =
-                        !search ||
-                        cardBrand.includes(search) ||
-                        cardRam.includes(search) ||
-                        cardRole.includes(search) ||
-                        cardName.includes(search) ||
-                        cardPrice.includes(search);
-
-                    const show = matchesBrand && matchesRam && matchesRole && matchesSearch;
-                    card.style.display = show ? "flex" : "none";
-                });
-
-                // Sort logic
-                const container = document.querySelector(".grid");
-                const visibleCards = cards.filter(card => card.style.display !== "none");
-
-                visibleCards.sort((a, b) => {
-                    const aName = a.dataset.name.toLowerCase();
-                    const bName = b.dataset.name.toLowerCase();
-                    const aPrice = parseFloat(a.dataset.price);
-                    const bPrice = parseFloat(b.dataset.price);
-
-                    switch (sort) {
-                        case "price-low-high":
-                            return aPrice - bPrice;
-                        case "price-high-low":
-                            return bPrice - aPrice;
-                        case "name-asc":
-                            return aName.localeCompare(bName);
-                        case "name-desc":
-                            return bName.localeCompare(aName);
-                        default:
-                            return 0;
-                    }
-                });
-
-                visibleCards.forEach(card => container.appendChild(card));
-            }
-
-            brandFilter.addEventListener("change", filterAndSortLaptops);
-            ramFilter.addEventListener("change", filterAndSortLaptops);
-            roleFilter.addEventListener("change", filterAndSortLaptops);
-            sortSelect.addEventListener("change", filterAndSortLaptops);
-            searchInput.addEventListener("input", () => {
-                filterAndSortLaptops();
-                const query = searchInput.value.trim();
-                if (query.length > 0) {
-                    const resultsSection = document.querySelector(".grid");
-                    if (resultsSection) {
-                        resultsSection.scrollIntoView({ behavior: "smooth" });
-                    }
-                }
-            });
-
-            function changeImage(src, clickedImg = null) {
-                document.getElementById("modalMainImage").src = src;
-                document.querySelectorAll(".thumbnail-img").forEach(img => {
-                    img.classList.remove("ring-2", "ring-blue-500");
-                });
-                if (clickedImg) {
-                    clickedImg.classList.add("ring-2", "ring-blue-500");
-                }
-            }
-
-            document.querySelectorAll(".thumbnail-img").forEach(img => {
-                img.addEventListener("click", () => {
-                    changeImage(img.src, img);
-                });
-            });
+            const laptopCards = document.querySelectorAll(".laptop-card");
 
             const modal = document.getElementById("detailsModal");
             const closeModal = document.getElementById("closeModal");
-            const viewDetailsButtons = document.querySelectorAll(".view-details-btn");
 
-            viewDetailsButtons.forEach(button => {
-                button.addEventListener("click", (e) => {
-                    const card = e.target.closest(".laptop-card");
+            const modalTitle = document.getElementById("modalTitle");
+            const modalMainImage = document.getElementById("modalMainImage");
+            const modalRam = document.getElementById("modalRam");
+            const modalStorage = document.getElementById("modalStorage");
+            const modalScreenSize = document.getElementById("modalScreenSize");
+            const modalColor = document.getElementById("modalColor");
+            const modalBatteryCondition = document.getElementById("modalBatteryCondition");
+            const modalDescription = document.getElementById("modalDescription");
+            const modalPrice = document.getElementById("modalPrice");
+            const firstThumb = document.getElementById("firstThumb");
 
-                    document.getElementById("modalTitle").innerText = card.dataset.brand + " " + card.dataset.model;
+            const modalRole = document.getElementById("modalRole");
+            const modalRoleIcon = document.getElementById("modalRoleIcon");
 
-                    const firstImageUrl = "/" + card.dataset.imgurl.replace(/^\/+/, "");
-                    document.getElementById("modalMainImage").src = firstImageUrl;
-                    document.getElementById("firstThumb").src = firstImageUrl;
+            const viewButtons = document.querySelectorAll(".view-details-btn"); // <-- Added here
 
-                    document.querySelectorAll(".thumbnail-img").forEach(img => {
-                        img.classList.remove("ring-2", "ring-blue-500");
-                    });
-                    document.getElementById("firstThumb").classList.add("ring-2", "ring-blue-500");
+            function filterAndSort() {
+                // Debug log
+                console.log("Filtering and sorting...");
 
-                    document.getElementById("modalPrice").innerText = card.dataset.price;
-                    document.getElementById("modalRam").innerText = card.dataset.ram;
-                    document.getElementById("modalStorage").innerText = card.dataset.storage;
-                    document.getElementById("modalScreenSize").innerText = card.dataset.screensize;
-                    document.getElementById("modalColor").innerText = card.dataset.color;
-                    document.getElementById("modalDescription").innerText = card.dataset.description;
+                const brand = brandFilter.value.toLowerCase();
+                const ram = ramFilter.value.toLowerCase();
+                const role = roleFilter.value.toLowerCase();
+                const search = searchInput.value.toLowerCase();
 
-                    const batteryCondition = parseInt(card.dataset.batterycondition);
-                    const batteryElem = document.getElementById("modalBatteryCondition");
+                const sortedCards = Array.from(laptopCards);
 
-                    batteryElem.innerText = batteryCondition + "%";
-                    batteryElem.className = "font-semibold px-2 py-1 rounded text-sm";
+                sortedCards.forEach(card => {
+                    const cardBrand = card.dataset.brand.toLowerCase();
+                    const cardRam = card.dataset.ram.toLowerCase();
+                    const cardModel = card.dataset.model.toLowerCase();
+                    const cardRole = (card.dataset.role || "").toLowerCase();
+                    const cardStorage = card.dataset.storage.toLowerCase();
 
-                    if (batteryCondition >= 80) {
-                        batteryElem.classList.add("bg-green-100", "text-green-700");
-                    } else if (batteryCondition >= 50) {
-                        batteryElem.classList.add("bg-yellow-100", "text-yellow-700");
-                    } else {
-                        batteryElem.classList.add("bg-red-100", "text-red-700");
+                    const matchesBrand = !brand || cardBrand.includes(brand);
+                    const matchesRam = !ram || cardRam.includes(ram);
+                    const matchesRole = !role || cardRole.includes(role);
+                    const matchesSearch = !search ||
+                        cardBrand.includes(search) ||
+                        cardRam.includes(search) ||
+                        cardModel.includes(search) ||
+                        cardStorage.includes(search);
+
+                    card.style.display = (matchesBrand && matchesRam && matchesSearch && matchesRole) ? "block" : "none";
+                });
+
+                // Sorting
+                const container = document.querySelector(".grid");
+                let sorted = [...sortedCards].filter(card => card.style.display !== "none");
+
+                switch (sortSelect.value) {
+                    case "price-low-high":
+                        sorted.sort((a, b) => parseFloat(a.dataset.price) - parseFloat(b.dataset.price));
+                        break;
+                    case "price-high-low":
+                        sorted.sort((a, b) => parseFloat(b.dataset.price) - parseFloat(a.dataset.price));
+                        break;
+                    case "name-asc":
+                        sorted.sort((a, b) => a.dataset.model.localeCompare(b.dataset.model));
+                        break;
+                    case "name-desc":
+                        sorted.sort((a, b) => b.dataset.model.localeCompare(a.dataset.model));
+                        break;
+                }
+
+                sorted.forEach(card => container.appendChild(card)); // Reorder DOM
+            }
+
+            brandFilter.addEventListener("change", filterAndSort);
+            ramFilter.addEventListener("change", filterAndSort);
+            roleFilter.addEventListener("change", filterAndSort);
+            sortSelect.addEventListener("change", filterAndSort);
+            searchInput.addEventListener("input", filterAndSort);
+
+            // Modal logic
+            viewButtons.forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const card = btn.closest(".laptop-card");
+                    modalTitle.textContent = `${card.dataset.brand} ${card.dataset.model}`;
+                    modalMainImage.src = "/" + card.dataset.imgurl;
+                    modalRam.textContent = card.dataset.ram;
+                    modalStorage.textContent = card.dataset.storage;
+                    modalScreenSize.textContent = card.dataset.screensize;
+                    modalColor.textContent = card.dataset.color;
+                    modalBatteryCondition.textContent = card.dataset.batterycondition;
+                    modalDescription.textContent = card.dataset.description;
+                    modalPrice.textContent = card.dataset.price;
+                    firstThumb.src = "/" + card.dataset.imgurl;
+
+                    // ✅ Set Role and Icon
+                    const role = card.dataset.role;
+                    modalRole.textContent = role;
+
+                    let iconClass = "";
+                    let colorClass = "";
+
+                    switch (role.toLowerCase()) {
+                        case "gamer":
+                            iconClass = "fas fa-gamepad";
+                            colorClass = "text-red-500";
+                            break;
+                        case "business":
+                            iconClass = "fas fa-briefcase";
+                            colorClass = "text-green-600";
+                            break;
+                        case "developer":
+                            iconClass = "fas fa-code";
+                            colorClass = "text-yellow-500";
+                            break;
+                        case "general use":
+                            iconClass = "fas fa-users";
+                            colorClass = "text-gray-500";
+                            break;
+                        default:
+                            iconClass = "fas fa-laptop";
+                            colorClass = "text-gray-400";
                     }
+
+                    modalRoleIcon.className = `${iconClass} ${colorClass} mr-2`;
 
                     modal.classList.remove("hidden");
                 });
             });
 
-            if (closeModal) {
-                closeModal.addEventListener("click", () => {
+            closeModal.addEventListener("click", () => {
+                modal.classList.add("hidden");
+            });
+
+            window.addEventListener("click", (e) => {
+                if (e.target === modal) {
                     modal.classList.add("hidden");
+                }
+            });
+
+            // Thumbnail click to update main image
+            document.querySelectorAll(".thumbnail-img").forEach(thumb => {
+                thumb.addEventListener("click", function () {
+                    modalMainImage.src = this.src;
                 });
-            }
+            });
         });
+
     </script>
+
 
 </body>
 </html>
