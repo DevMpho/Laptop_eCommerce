@@ -241,12 +241,12 @@
     </div>
 
     <script>
+        document.addEventListener("DOMContentLoaded", () => {
             const brandFilter = document.getElementById("brandFilter");
             const ramFilter = document.getElementById("ramFilter");
             const roleFilter = document.getElementById("roleFilter");
             const sortSelect = document.getElementById("sortSelect");
             const searchInput = document.getElementById("searchInput");
-    const searchInput = document.getElementById("searchInput");
 
             function filterAndSortLaptops() {
                 const brand = brandFilter.value.toLowerCase();
@@ -254,7 +254,6 @@
                 const role = roleFilter.value.toLowerCase();
                 const sort = sortSelect.value;
                 const search = searchInput.value.toLowerCase();
-        const search = searchInput.value.toLowerCase();
 
                 const cards = Array.from(document.querySelectorAll(".laptop-card"));
 
@@ -312,106 +311,83 @@
             roleFilter.addEventListener("change", filterAndSortLaptops);
             sortSelect.addEventListener("change", filterAndSortLaptops);
             searchInput.addEventListener("input", () => {
-            filterAndSortLaptops();
-
-            const query = searchInput.value.trim();
-            if (query.length > 0) {
-                const resultsSection = document.querySelector(".grid");
-                if (resultsSection) {
-                    resultsSection.scrollIntoView({ behavior: "smooth" });
+                filterAndSortLaptops();
+                const query = searchInput.value.trim();
+                if (query.length > 0) {
+                    const resultsSection = document.querySelector(".grid");
+                    if (resultsSection) {
+                        resultsSection.scrollIntoView({ behavior: "smooth" });
+                    }
                 }
-            }
-        });
-
-        function changeImage(src, clickedImg = null) {
-            document.getElementById("modalMainImage").src = src;
-
-            // Remove highlight from all thumbnails
-            document.querySelectorAll(".thumbnail-img").forEach(img => {
-                img.classList.remove("ring-2", "ring-blue-500");
             });
 
-            // Add highlight to the clicked thumbnail
-            if (clickedImg) {
-                clickedImg.classList.add("ring-2", "ring-blue-500");
-            }
-        }
-
-        // Setup thumbnail click listeners
-        document.querySelectorAll(".thumbnail-img").forEach(img => {
-            img.addEventListener("click", () => {
-                changeImage(img.src, img);
-            });
-        });
-
-                // Get the modal and close button elements
-        const modal = document.getElementById("detailsModal");
-        const closeModal = document.getElementById("closeModal");
-
-        // Get all view details buttons
-        const viewDetailsButtons = document.querySelectorAll(".view-details-btn");
-
-        // Setup thumbnail click listeners
-        document.querySelectorAll(".thumbnail-img").forEach(img => {
-            img.addEventListener("click", () => {
-                changeImage(img.src, img);
-            });
-        });
-
-        
-        // Modal open logic
-        viewDetailsButtons.forEach(button => {
-            button.addEventListener("click", (e) => {
-                const card = e.target.closest(".laptop-card");
-
-                document.getElementById("modalTitle").innerText = card.dataset.brand + " " + card.dataset.model;
-
-                const firstImageUrl = "/" + card.dataset.imgurl.replace(/^\/+/, "");
-                document.getElementById("modalMainImage").src = firstImageUrl;
-                document.getElementById("firstThumb").src = firstImageUrl;
-
-                // Clear existing highlights
+            function changeImage(src, clickedImg = null) {
+                document.getElementById("modalMainImage").src = src;
                 document.querySelectorAll(".thumbnail-img").forEach(img => {
                     img.classList.remove("ring-2", "ring-blue-500");
                 });
-
-                // Highlight the first one
-                document.getElementById("firstThumb").classList.add("ring-2", "ring-blue-500");
-
-                // Fill in modal specs
-                document.getElementById("modalPrice").innerText = card.dataset.price;
-                document.getElementById("modalRam").innerText = card.dataset.ram;
-                document.getElementById("modalStorage").innerText = card.dataset.storage;
-                document.getElementById("modalScreenSize").innerText = card.dataset.screensize;
-                document.getElementById("modalColor").innerText = card.dataset.color;
-                document.getElementById("modalDescription").innerText = card.dataset.description;
-
-                const batteryCondition = parseInt(card.dataset.batterycondition);
-                const batteryElem = document.getElementById("modalBatteryCondition");
-
-                batteryElem.innerText = batteryCondition + "%";
-                batteryElem.className = "font-semibold px-2 py-1 rounded text-sm";
-
-                if (batteryCondition >= 80) {
-                    batteryElem.classList.add("bg-green-100", "text-green-700");
-                } else if (batteryCondition >= 50) {
-                    batteryElem.classList.add("bg-yellow-100", "text-yellow-700");
-                } else {
-                    batteryElem.classList.add("bg-red-100", "text-red-700");
+                if (clickedImg) {
+                    clickedImg.classList.add("ring-2", "ring-blue-500");
                 }
+            }
 
-                modal.classList.remove("hidden");
+            document.querySelectorAll(".thumbnail-img").forEach(img => {
+                img.addEventListener("click", () => {
+                    changeImage(img.src, img);
+                });
             });
-        });
 
-        closeModal.addEventListener("click", () => {
-            modal.classList.add("hidden");
-        });
+            const modal = document.getElementById("detailsModal");
+            const closeModal = document.getElementById("closeModal");
+            const viewDetailsButtons = document.querySelectorAll(".view-details-btn");
 
-        
+            viewDetailsButtons.forEach(button => {
+                button.addEventListener("click", (e) => {
+                    const card = e.target.closest(".laptop-card");
+
+                    document.getElementById("modalTitle").innerText = card.dataset.brand + " " + card.dataset.model;
+
+                    const firstImageUrl = "/" + card.dataset.imgurl.replace(/^\/+/, "");
+                    document.getElementById("modalMainImage").src = firstImageUrl;
+                    document.getElementById("firstThumb").src = firstImageUrl;
+
+                    document.querySelectorAll(".thumbnail-img").forEach(img => {
+                        img.classList.remove("ring-2", "ring-blue-500");
+                    });
+                    document.getElementById("firstThumb").classList.add("ring-2", "ring-blue-500");
+
+                    document.getElementById("modalPrice").innerText = card.dataset.price;
+                    document.getElementById("modalRam").innerText = card.dataset.ram;
+                    document.getElementById("modalStorage").innerText = card.dataset.storage;
+                    document.getElementById("modalScreenSize").innerText = card.dataset.screensize;
+                    document.getElementById("modalColor").innerText = card.dataset.color;
+                    document.getElementById("modalDescription").innerText = card.dataset.description;
+
+                    const batteryCondition = parseInt(card.dataset.batterycondition);
+                    const batteryElem = document.getElementById("modalBatteryCondition");
+
+                    batteryElem.innerText = batteryCondition + "%";
+                    batteryElem.className = "font-semibold px-2 py-1 rounded text-sm";
+
+                    if (batteryCondition >= 80) {
+                        batteryElem.classList.add("bg-green-100", "text-green-700");
+                    } else if (batteryCondition >= 50) {
+                        batteryElem.classList.add("bg-yellow-100", "text-yellow-700");
+                    } else {
+                        batteryElem.classList.add("bg-red-100", "text-red-700");
+                    }
+
+                    modal.classList.remove("hidden");
+                });
+            });
+
+            if (closeModal) {
+                closeModal.addEventListener("click", () => {
+                    modal.classList.add("hidden");
+                });
+            }
+        });
     </script>
-
-
 
 </body>
 </html>
