@@ -56,9 +56,8 @@ namespace Laptops.Data
                 .HasForeignKey(ci => ci.laptops_id);
 
             modelBuilder.Entity<Orders>()
-                .HasOne(o => o.Employee)
-                .WithMany()
-                .HasForeignKey(o => o.employee_id);
+                .Property(o => o.totalAmount)
+                .HasColumnType("decimal(18,2)");
 
             modelBuilder.Entity<Orders>()
                 .HasOne(o => o.OrderStatus)

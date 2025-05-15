@@ -16,6 +16,6 @@
 
         public string? Role { get; set; }
 
-        public int userLaptopStatus { get; set; } // 0 = available, 1 = in bascket
+        public int userLaptopStatus { get; set; } // 0 = available, 1 = in bascket, 
     }
 }

@@ -9,6 +9,8 @@ public class Orders
 
     public int employee_id { get; set; }
     public DateTime order_date { get; set; }
+
+    [Column(TypeName = "decimal(18,2)")]
     public decimal totalAmount { get; set; }
     public int status { get; set; }
 
