@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Laptops.Helpers;
 using Laptops.Data;
 using Laptops.Models;
+using System.Runtime.Intrinsics.Arm;
 
 public class LaptopService
 {
@@ -62,6 +63,7 @@ public class LaptopService
                     ScreenSize = l.screensize,
                     Description = l.description,
                     Color = l.color,
+                    Role =  l.LaptopDetails.role,
                     BatteryLife = l.batteryLife,
                     userLaptopStatus = 0 // Default status
                 })
