@@ -1,5 +1,8 @@
 ﻿using Laptops.Data;
+using Laptops.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 
 namespace Laptops.Helpers
 {
@@ -7,13 +10,17 @@ namespace Laptops.Helpers
     {
         private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger<LaptopStatusHelper> _logger;
+        private readonly IMemoryCache _cache;
 
-        public LaptopStatusHelper(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
+        public LaptopStatusHelper(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, ILogger<LaptopStatusHelper> logger, IMemoryCache cache)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
+            _cache = cache;
         }
-
+        private string GetCacheKey(int employeeId) => $"UserOrders_{employeeId}";
         /// <summary>
         /// Returns a map of LaptopId to userLaptopStatus:
         /// 0 = Available (not listed in the dictionary)
@@ -68,5 +75,73 @@ namespace Laptops.Helpers
 
             return statusMap;
         }
+        public async Task<List<OrderViewModel>> GetEmployeeOrdersAsync(int employeeId)
+        {
+            try
+            {
+                string cacheKey = GetCacheKey(employeeId);
+
+                // Check if the orders are cached
+                if (_cache.TryGetValue(cacheKey, out List<OrderViewModel> cachedOrders))
+                {
+                    return cachedOrders;
+                }
+
+                // Fetch orders from the database
+                var orders = await _context.Orders
+                    .Where(o => o.employee_id == employeeId)
+                    .Include(o => o.OrderStatus)
+                    .OrderByDescending(o => o.order_date)
+                    .ToListAsync();
+
+                var orderViewModels = orders.Select(order => new OrderViewModel
+                {
+                    OrderId = order.order_id,
+                    OrderDate = order.order_date,
+                    TotalAmount = order.total_amount,
+                    Status = order.OrderStatus.status_name,
+                    Laptops = new List<LaptopViewModel>()
+                }).ToList();
+
+                // Cache the result
+                _cache.Set(cacheKey, orderViewModels, TimeSpan.FromMinutes(30));
+
+                return orderViewModels;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "❌ Error fetching employee orders");
+                return new List<OrderViewModel>();
+            }
+        }
+
+        public void InvalidateEmployeeOrdersCache(int employeeId)
+        {
+            string cacheKey = GetCacheKey(employeeId);
+            _cache.Remove(cacheKey);
+        }
+
+        public async Task<List<OrderViewModel>> GetUserOrdersAsync(List<LaptopViewModel> laptops)
+        {
+            string? employeeIdStr = _httpContextAccessor.HttpContext?.Session.GetString("EmployeeId");
+            if (!int.TryParse(employeeIdStr, out int employeeId))
+            {
+                _logger.LogWarning("No valid EmployeeId in session.");
+                return new List<OrderViewModel>();
+            }
+
+            var orders = await GetEmployeeOrdersAsync(employeeId);
+
+            var orderedLaptops = laptops.Where(l => l.userLaptopStatus == 2).ToList();
+
+            foreach (var order in orders)
+            {
+                var laptopsForOrder = orderedLaptops.Where(l => l.LaptopId == order.OrderId).ToList();
+                order.Laptops.AddRange(laptopsForOrder);
+            }
+
+            return orders;
+        }
+
     }
 }
