@@ -15,16 +15,39 @@
         <!-- Main Nav Area -->
         <div class="flex items-center space-x-6 mt-4 md:mt-0 md:ml-auto">
 
-            <!-- View Laptops -->
-            <a asp-controller="Laptops" asp-action="Display" class="bg-green-500 px-4 py-2 rounded text-white text-sm hover:bg-green-600 transition-colors duration-200">
-                View Laptops
-            </a>
-            <!-- Contact Us -->
-            <a asp-controller="Home" asp-action="ContactUs" class="bg-green-500 px-4 py-2 rounded text-white text-sm hover:bg-green-600 transition-colors duration-200">
-                Contact Us
-            </a>
+            <!-- Main Nav Area -->
+            <div class="flex items-center space-x-6 mt-4 md:mt-0 md:ml-auto text-sm">
 
-            
+                <!-- View Laptops -->
+                <a asp-controller="Laptops" asp-action="Display"
+                   class="transition-colors duration-200
+                   @(ViewContext.RouteData.Values["controller"]?.ToString() == "Laptops"
+                     ? "text-white font-bold underline"
+                     : "text-white font-semibold hover:text-green-600")">
+                    View Laptops
+                </a>
+
+                <!-- Contact Us -->
+                <a asp-controller="Home" asp-action="ContactUs"
+                   class="transition-colors duration-200
+                   @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home"
+                     && ViewContext.RouteData.Values["action"]?.ToString() == "ContactUs"
+                     ? "text-white font-bold underline"
+                     : "text-white font-semibold hover:text-green-600")">
+                    Contact Us
+                </a>
+
+                <!-- Orders -->
+                <a asp-controller="Home" asp-action="Orders"
+                   class="transition-colors duration-200
+                   @(ViewContext.RouteData.Values["controller"]?.ToString() == "Orders"
+                     ? "text-white font-bold underline"
+                     : "text-white font-semibold hover:text-green-600")">
+                    Orders
+                </a>
+            </div>
+
+
 
 
             <!-- Profile Initials -->
