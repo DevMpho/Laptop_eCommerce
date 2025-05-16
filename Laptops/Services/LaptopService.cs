@@ -100,4 +100,5 @@ public class LaptopService
             return new List<LaptopViewModel>();
         }
     }
+    
 }
