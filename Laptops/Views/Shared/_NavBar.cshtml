@@ -1,85 +1,57 @@
-@{
+﻿@{
     var initials = Context.Session.GetString("Initials") ?? "NA";
     var email = Context.Session.GetString("Email") ?? "Not logged in";
 }
-
 <header class="fixed top-0 left-0 right-0 bg-blue-900 px-6 py-3 z-50 shadow-md">
-    <div class="flex flex-wrap items-center justify-between">
+    <div class="flex items-center justify-between flex-wrap md:flex-nowrap">
         <!-- Logo -->
         <a href="@Url.Action("Index", "Home")" class="flex items-center space-x-2">
             <img src="/images/logo.webp" alt="mint logo" class="h-14 w-32" />
         </a>
 
-        <!-- Mobile toggle placeholder (optional) -->
-        <!-- You can include a menu toggle button here if needed -->  
-        <!-- Main Nav Area -->
-        <div class="flex items-center space-x-6 mt-4 md:mt-0 md:ml-auto">
+        <!-- Hamburger Button -->
+        <button class="md:hidden text-white text-2xl" onclick="document.getElementById('mobileMenu').classList.toggle('hidden')">
+            <i class="fas fa-bars"></i>
+        </button>
 
-            <!-- Main Nav Area -->
-            <div class="flex items-center space-x-6 mt-4 md:mt-0 md:ml-auto text-sm">
-
-                <!-- View Laptops -->
+        <!-- Navigation and Icons -->
+        <div id="mobileMenu" class="w-full mt-4 md:mt-0 hidden md:flex md:items-center md:justify-end md:space-x-6 text-sm">
+            <!-- Nav Links -->
+            <div class="flex flex-col md:flex-row md:space-x-6">
                 <a asp-controller="Laptops" asp-action="Display"
-                   class="transition-colors duration-200
-                   @(ViewContext.RouteData.Values["controller"]?.ToString() == "Laptops"
-                     ? "text-white font-bold underline"
-                     : "text-white font-semibold hover:text-green-600")">Home</a>
-
-                <!-- Contact Us -->
+                   class="transition duration-200 @(ViewContext.RouteData.Values["controller"]?.ToString() == "Laptops" ? "text-white font-bold underline" : "text-white hover:text-green-600")">Home</a>
                 <a asp-controller="Home" asp-action="ContactUs"
-                   class="transition-colors duration-200
-                   @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home"
-                     && ViewContext.RouteData.Values["action"]?.ToString() == "ContactUs"
-                     ? "text-white font-bold underline"
-                     : "text-white font-semibold hover:text-green-600")">Contact Us</a>
-
-                <!-- Orders -->
+                   class="transition duration-200 @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "ContactUs" ? "text-white font-bold underline" : "text-white hover:text-green-600")">Contact Us</a>
                 <a asp-controller="Home" asp-action="Orders"
-                   class="transition-colors duration-200
-                   @(ViewContext.RouteData.Values["controller"]?.ToString() == "Orders"
-                     ? "text-white font-bold underline"
-                     : "text-white font-semibold hover:text-green-600")">Orders</a>
+                   class="transition duration-200 @(ViewContext.RouteData.Values["controller"]?.ToString() == "Orders" ? "text-white font-bold underline" : "text-white hover:text-green-600")">Orders</a>
             </div>
 
-
-
-
-            <!-- Profile Initials -->
-            @if (initials != "NA")
-            {
-                <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold cursor-default" title="@email">
-                    @initials
-                </div>
-            }
-            else
-            {
-                <!-- Fallback Icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z" />
-                </svg>
-            }
-
-            <!-- Shopping Cart Icon (Enlarged) -->
-            <a asp-action="ShoppingCart" class="relative">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-7 h-7 text-white hover:text-green-400 transition">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.293 2.293a1 1 0 00.217 1.32l.083.07a1 1 0 001.32-.217L9 14h6l1.293 2.293a1 1 0 001.32.217l.083-.07a1 1 0 00.217-1.32L17 13M7 13V6h10v7" />
-                </svg>
-            </a>
-
-            <!-- Logout Icon with Tooltip -->
-            <div class="relative group">
-                <a href="@Url.Action("Logout", "Account")" class="text-white hover:text-red-500 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <title>Logout</title>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" />
+            <!-- Icons and Profile -->
+            <div class="flex items-center space-x-4 mt-4 md:mt-0">
+                <!-- Profile Initials -->
+                @if (initials != "NA")
+                {
+                    <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold" title="@email">
+                        @initials
+                    </div>
+                }
+                else
+                {
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z" />
                     </svg>
+                }
+
+                <!-- Cart -->
+                <a asp-action="ShoppingCart" class="text-white hover:text-green-400 transition">
+                    <i class="fas fa-shopping-cart text-xl"></i>
                 </a>
-                <div class="absolute right-0 top-8 opacity-0 group-hover:opacity-100 bg-gray-800 text-white text-xs px-2 py-1 rounded shadow transition duration-200">
-                    Logout
-                </div>
+
+                <!-- Logout -->
+                <a href="@Url.Action("Logout", "Account")" class="text-white hover:text-red-500 transition">
+                    <i class="fas fa-sign-out-alt text-xl"></i>
+                </a>
             </div>
         </div>
     </div>
 </header>
-
-
