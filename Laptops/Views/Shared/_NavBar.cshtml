@@ -3,7 +3,7 @@
     var email = Context.Session.GetString("Email") ?? "Not logged in";
 }
 
-<header class="bg-blue-900 text-white px-6 py-3">
+<header class="fixed top-0 left-0 right-0 bg-blue-900 px-6 py-3 z-50 shadow-md">
     <div class="flex flex-wrap items-center justify-between">
         <!-- Logo -->
         <a href="@Url.Action("Index", "Home")" class="flex items-center space-x-2">
@@ -23,9 +23,7 @@
                    class="transition-colors duration-200
                    @(ViewContext.RouteData.Values["controller"]?.ToString() == "Laptops"
                      ? "text-white font-bold underline"
-                     : "text-white font-semibold hover:text-green-600")">
-                    View Laptops
-                </a>
+                     : "text-white font-semibold hover:text-green-600")">Home</a>
 
                 <!-- Contact Us -->
                 <a asp-controller="Home" asp-action="ContactUs"
@@ -33,18 +31,14 @@
                    @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home"
                      && ViewContext.RouteData.Values["action"]?.ToString() == "ContactUs"
                      ? "text-white font-bold underline"
-                     : "text-white font-semibold hover:text-green-600")">
-                    Contact Us
-                </a>
+                     : "text-white font-semibold hover:text-green-600")">Contact Us</a>
 
                 <!-- Orders -->
                 <a asp-controller="Home" asp-action="Orders"
                    class="transition-colors duration-200
                    @(ViewContext.RouteData.Values["controller"]?.ToString() == "Orders"
                      ? "text-white font-bold underline"
-                     : "text-white font-semibold hover:text-green-600")">
-                    Orders
-                </a>
+                     : "text-white font-semibold hover:text-green-600")">Orders</a>
             </div>
 
 
