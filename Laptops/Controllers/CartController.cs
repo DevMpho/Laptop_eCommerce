@@ -86,9 +86,25 @@ public class CartController : Controller
         var items = _context.CartItems
             .Where(ci => ci.employeecart_id == cart.employeecart_id)
             .Include(ci => ci.Laptop)
+            .ThenInclude(l => l!.LaptopDetails)
             .ToList();
 
         return PartialView("_CartSidebar", items);
+    }
+
+    [HttpPost]
+    public IActionResult RemoveFromCart(int id)
+    {
+        var item = _context.CartItems.FirstOrDefault(ci => ci.cartitems_id == id);
+        if (item != null)
+        {
+            _context.CartItems.Remove(item);
+            _context.SaveChanges();
+        }
+
+        // Return updated cart sidebar
+        return RedirectToAction("Sidebar", "Cart");
+
     }
 
 
