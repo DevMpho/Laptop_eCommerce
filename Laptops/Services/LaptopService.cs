@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Laptops.Helpers;
 using Laptops.Data;
 using Laptops.Models;
-using System.Runtime.Intrinsics.Arm;
 
 public class LaptopService
 {
@@ -43,7 +42,14 @@ public class LaptopService
         if (_cache.TryGetValue(userCacheKey, out List<LaptopViewModel> cachedLaptops))
         {
             _logger.LogInformation("✅ Cache hit for employee ID: {EmployeeId}", employeeId);
+            foreach (var laptop in cachedLaptops)
+            {
+                _logger.LogInformation("🔁 Cached Laptop - ID: {Id}, Brand: {Brand}, Model: {Model}, Price: {Price}, Status: {Status}",
+                    laptop.LaptopId, laptop.Brand, laptop.Model, laptop.Price, laptop.userLaptopStatus);
+            }
+
             return cachedLaptops;
+
         }
 
         try
@@ -94,4 +100,5 @@ public class LaptopService
             return new List<LaptopViewModel>();
         }
     }
+    
 }

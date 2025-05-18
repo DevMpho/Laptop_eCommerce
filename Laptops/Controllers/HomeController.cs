@@ -1,3 +1,4 @@
+﻿using Laptops.Helpers;
 using Laptops.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -7,14 +8,20 @@ namespace Laptops.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly LaptopService _laptopService;
+        private readonly LaptopStatusHelper _laptopStatusHelper;
 
-        public HomeController(ILogger<HomeController> logger)
+
+        public HomeController(ILogger<HomeController> logger, LaptopService laptopService, LaptopStatusHelper laptopStatusHelper)
         {
             _logger = logger;
+            _laptopService = laptopService;
+            _laptopStatusHelper = laptopStatusHelper;
+
         }
 
 
-        
+
         public IActionResult LaptopDetails()
         {
             return View();
@@ -90,29 +97,14 @@ namespace Laptops.Controllers
             return View(); // This looks for Views/Home/LaptopDetails.cshtml
         }
 
-        public IActionResult orders()
+        public async Task<IActionResult> Orders()
         {
-            var orders = new List<laptop_details>
-    {
-        new laptop_details {
-            laptopdetails_id = 1,
-            brand = "Lenovo Legion G15",
-            
-        },
-        new laptop_details {
-            laptopdetails_id = 1,
-            brand = "Lenovo Legion G15",
-
-        },
-        new laptop_details {
-            laptopdetails_id = 1,
-            brand = "Lenovo Legion G15",
-
-        },
-    };
-
+            var laptops = await _laptopService.GetLaptopsAsync(); // Fetch the cached laptops
+            var orders = await _laptopStatusHelper.GetUserOrdersAsync(laptops); // Pass the laptops to the method
             return View(orders);
         }
+
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

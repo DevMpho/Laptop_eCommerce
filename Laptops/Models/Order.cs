@@ -1,6 +1,6 @@
 ﻿using Laptops.Models;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class Orders
 {
@@ -9,10 +9,12 @@ public class Orders
 
     public int employee_id { get; set; }
     public DateTime order_date { get; set; }
-    public int totalAmount { get; set; }
-    public int status { get; set; }
 
-    [ForeignKey(nameof(status))]
+    public int total_amount { get; set; }
+    // Foreign key to order_status
+    public int order_status_id { get; set; }
+
+    [ForeignKey(nameof(order_status_id))]
     public required order_status OrderStatus { get; set; }
 
     [ForeignKey(nameof(employee_id))]
