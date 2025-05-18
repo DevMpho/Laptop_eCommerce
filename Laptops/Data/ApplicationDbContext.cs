@@ -60,10 +60,11 @@ namespace Laptops.Data
                 .WithMany()
                 .HasForeignKey(o => o.employee_id);
 
-            modelBuilder.Entity<Orders>()
-                .HasOne(o => o.OrderStatus)
-                .WithMany()
-                .HasForeignKey(o => o.status);
+            modelBuilder.Entity<cart_items>()
+     .HasOne(ci => ci.Order)
+     .WithMany(o => o.CartItems)
+     .HasForeignKey(ci => ci.order_id);
+
         }
 
     }

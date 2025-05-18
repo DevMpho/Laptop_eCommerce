@@ -130,7 +130,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 @foreach (var laptop in Model)
                 {
-                <div class="bg-white rounded-xl border shadow-md p-4 text-center laptop-card"
+                <div class="bg-white rounded-xl border shadow-md p-4 text-center laptop-card data-laptopid=" @laptop.LaptopId""
                      data-brand="@laptop.Brand" data-ram="@laptop.Ram" data-price="@laptop.Price"
                      data-imgurl="@laptop.ImgUrl" data-model="@laptop.Model" data-storage="@laptop.Storage"
                      data-screensize="@laptop.ScreenSize" data-color="@laptop.Color"
@@ -231,9 +231,11 @@
                                 <i class="fas fa-arrow-left"></i> Back To Home
                             </a>
 
-                            <a asp-action="ShoppingCart" class="text-center bg-green-600 text-white py-2 rounded-md font-semibold hover:bg-green-700 flex items-center justify-center gap-2">
+                            <button id="addToCartBtn" 
+                                    class="text-center bg-green-600 text-white py-2 rounded-md font-semibold hover:bg-green-700 flex items-center justify-center gap-2">
                                 <i class="fas fa-shopping-cart"></i> Add to Cart
-                            </a>
+                            </button>
+
                         </div>
 
                     </div>
@@ -334,6 +336,7 @@
             searchInput.addEventListener("input", filterAndSort);
 
             // Modal logic
+            const addToCartBtn = document.getElementById('addToCartBtn');
             viewButtons.forEach(btn => {
                 btn.addEventListener("click", () => {
                     const card = btn.closest(".laptop-card");
@@ -347,6 +350,8 @@
                     modalDescription.textContent = card.dataset.description;
                     modalPrice.textContent = card.dataset.price;
                     firstThumb.src = "/" + card.dataset.imgurl;
+                    const laptopId = card.dataset.laptopid;
+                    addToCartBtn.setAttribute('data-laptop-id', laptopId);
 
                     // ✅ Set Role and Icon
                     const role = card.dataset.role;
@@ -400,6 +405,59 @@
                 });
             });
         });
+
+
+        addToCartBtn.addEventListener('click', function () {
+            const laptopId = this.getAttribute('data-laptop-id');
+
+            if (!laptopId) {
+                alert("Laptop ID is missing.");
+                return;
+            }
+
+            const button = this;
+            const originalText = button.textContent;
+            button.textContent = "Adding...";
+            button.disabled = true;
+
+            fetch(`/Cart/AddToCart?laptopId=${laptopId}`, {
+                method: 'POST'
+            })
+                .then(res => {
+                    if (res.ok) {
+                        updateCartCount();
+                        // Wait 1 second before changing to "Added"
+                        setTimeout(() => {
+                            button.textContent = "Added";
+
+                            // Then wait another 2 seconds to reset
+                            setTimeout(() => {
+                                button.textContent = originalText;
+                                button.disabled = false;
+                            }, 2000);
+                        }, 1000);
+
+                        updateCartCount();
+                    } else {
+                        button.textContent = "Failed";
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                            button.disabled = false;
+                        }, 2000);
+                    }
+                })
+                .catch(() => {
+                    button.textContent = "Error";
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.disabled = false;
+                    }, 2000);
+                });
+        });
+
+
+
+        
 
     </script>
 

@@ -9,7 +9,7 @@ public class Orders
 
     public int employee_id { get; set; }
     public DateTime order_date { get; set; }
-    public decimal totalAmount { get; set; }
+    public int totalAmount { get; set; }
     public int status { get; set; }
 
     [ForeignKey(nameof(status))]
@@ -17,4 +17,7 @@ public class Orders
 
     [ForeignKey(nameof(employee_id))]
     public required Employee Employee { get; set; }
+
+    public ICollection<cart_items> CartItems { get; set; }
+
 }

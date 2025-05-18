@@ -1,0 +1,22 @@
+﻿@model List<Laptops.Models.cart_items>
+
+@if (Model != null && Model.Count > 0)
+{
+    foreach (var item in Model)
+    {
+        if (item.Laptop != null)
+        {
+            <div class="flex items-center space-x-4 mb-4">
+                <img src="@Url.Content("~/" + item.Laptop.imgUrl)"  class="w-16 h-16 object-cover rounded" />
+                <div>
+                    
+                    <div class="text-sm font-bold text-green-600">R @item.Laptop.price</div>
+                </div>
+            </div>
+        }
+    }
+}
+else
+{
+    <p class="text-gray-500">Your cart is empty.</p>
+}
