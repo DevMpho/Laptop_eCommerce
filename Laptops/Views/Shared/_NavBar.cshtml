@@ -76,6 +76,7 @@
         <button onclick="closeSidebar()" class="text-gray-600 hover:text-red-600">&times;</button>
     </div>
     <div id="sidebar-content" class="p-4">
+
         <!-- Cart items will be injected here -->
         <p>Loading...</p>
     </div>
@@ -119,6 +120,30 @@
         document.getElementById('cart-sidebar').classList.add('translate-x-full');
         document.getElementById('sidebar-backdrop').classList.add('hidden');
     }
+
+
+    // Delegate click handling after DOM is loaded
+    document.addEventListener('DOMContentLoaded', function () {
+        document.body.addEventListener('submit', function (e) {
+            if (e.target.classList.contains('remove-from-cart-form')) {
+                e.preventDefault(); // Stop default redirect behavior
+
+                const form = e.target;
+                const actionUrl = form.getAttribute('action');
+                const formData = new FormData(form);
+
+                fetch(actionUrl, {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById('sidebar-content').innerHTML = html;
+                    })
+                    .catch(error => console.error('Error removing item:', error));
+            }
+        });
+    });
 </script>
 
 

@@ -40,7 +40,7 @@ public class CartController : Controller
         {
             laptops_id = laptopId,
             employeecart_id = cart.employeecart_id,
-            status_id = 1, // Assuming 1 = 'in cart' status
+            status_id = 1, 
            
         };
 
@@ -89,8 +89,10 @@ public class CartController : Controller
             .ThenInclude(l => l!.LaptopDetails)
             .ToList();
 
-        return PartialView("_CartSidebar", items);
+        return PartialView("_CartSidebar", items); 
     }
+
+
 
     [HttpPost]
     public IActionResult RemoveFromCart(int id)
@@ -102,10 +104,28 @@ public class CartController : Controller
             _context.SaveChanges();
         }
 
-        // Return updated cart sidebar
-        return RedirectToAction("Sidebar", "Cart");
+        // Get current employeeId from session
+        var employeeIdStr = HttpContext.Session.GetString("EmployeeId");
+        if (string.IsNullOrEmpty(employeeIdStr))
+            return PartialView("_CartSidebar", new List<cart_items>());
 
+        int employeeId = int.Parse(employeeIdStr);
+
+        var cart = _context.EmployeeCarts.FirstOrDefault(c => c.employee_id == employeeId);
+        if (cart == null)
+            return PartialView("_CartSidebar", new List<cart_items>());
+
+        // Get only this employee's cart items
+        var updatedCartItems = _context.CartItems
+            .Where(ci => ci.employeecart_id == cart.employeecart_id)
+            .Include(ci => ci.Laptop)
+            .ThenInclude(l => l!.LaptopDetails)
+            .ToList();
+
+        return PartialView("_CartSidebar", updatedCartItems);
     }
+
+
 
 
 
