@@ -46,6 +46,8 @@ public class LaptopService
             {
                 _logger.LogInformation("🔁 Cached Laptop - ID: {Id}, Brand: {Brand}, Model: {Model}, Price: {Price}, Status: {Status}",
                     laptop.LaptopId, laptop.Brand, laptop.Model, laptop.Price, laptop.userLaptopStatus);
+                laptop.IsInCart = _context.CartItems
+                    .Any(ci => ci.employeecart_id == employeeId && ci.laptops_id == laptop.LaptopId && ci.status_id == 1);
             }
 
             return cachedLaptops;
@@ -71,7 +73,9 @@ public class LaptopService
                     Color = l.color,
                     Role =  l.LaptopDetails.role,
                     BatteryLife = l.batteryLife,
-                    userLaptopStatus = 0 // Default status
+                    userLaptopStatus = 0, // Default status
+                    IsInCart = _context.CartItems
+                        .Any(ci => ci.employeecart_id == employeeId && ci.laptops_id == l.laptops_id && ci.status_id == 1)
                 })
                 .ToListAsync();
 

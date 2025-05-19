@@ -131,6 +131,12 @@
                 const form = e.target;
                 const actionUrl = form.getAttribute('action');
                 const formData = new FormData(form);
+                
+                // Allow item to be re-added to cart
+                const card = document.getElementById('laptop-card+' + form.id);
+                if (card) {
+                    card.setAttribute('data-existsincart', 'False');
+                }
 
                 fetch(actionUrl, {
                     method: 'POST',
@@ -139,6 +145,7 @@
                     .then(response => response.text())
                     .then(html => {
                         document.getElementById('sidebar-content').innerHTML = html;
+                        updateCartCount();
                     })
                     .catch(error => console.error('Error removing item:', error));
             }
