@@ -19,4 +19,7 @@ public class Orders
 
     [ForeignKey(nameof(employee_id))]
     public required Employee Employee { get; set; }
+
+    public ICollection<cart_items> CartItems { get; set; }
+
 }
