@@ -71,6 +71,14 @@
 
         </div>
     </div>
+	<div class="flex justify-center mt-10">
+		<h2 class="text-2xl font-semibold text-gray-800">Actions</h2>
+            <button onclick="updateLaptopStatus('AddToCart', 5)">Add to Cart</button>
+            <button onclick="updateLaptopStatus('DeleteCartItem', 5)">Delete Cart</button>
+            <button onclick="updateLaptopStatus('AddToOrders', 5)">Make Request</button>
+            <button onclick="updateLaptopStatus('DeleteOrder', 5)">Delete Order</button>
+	</div>
+
 
     <!-- Filters & Sort Section -->
     <div class="max-w-7xl mx-auto mt-10 px-4">
@@ -401,6 +409,24 @@
                 });
             });
         });
+                function updateLaptopStatus(action, laptopId) {
+            fetch(`/Laptops/${action}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id: laptopId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    console.log(`✅ Status updated for laptop ${laptopId} via ${action}`);
+                    location.reload(); // Optional: refresh to reflect new status
+                } else {
+                    console.warn(`❌ Failed to update status for laptop ${laptopId}`);
+                }
+            });
+        }
 
     </script>
 
