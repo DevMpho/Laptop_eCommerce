@@ -1,5 +1,6 @@
 using Laptops.Data;
 using Laptops.Helpers;
+using Laptops.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,6 +29,9 @@ builder.Services.AddMemoryCache();
 builder.Services.AddScoped<LaptopService>();
 builder.Services.AddLogging();
 builder.Services.AddScoped<LaptopStatusHelper>();
+builder.Services.AddSingleton<LaptopStatusUpdater>();
+
+
 
 // Configure logging
 builder.Logging.ClearProviders();  // Clear default providers to avoid duplicate logs
