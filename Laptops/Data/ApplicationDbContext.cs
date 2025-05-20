@@ -42,8 +42,9 @@ namespace Laptops.Data
 
             modelBuilder.Entity<cart_items>()
                 .HasOne(ci => ci.EmployeeCart)
-                .WithMany()
+                .WithMany(ec => ec.CartItems)
                 .HasForeignKey(ci => ci.employeecart_id);
+
 
             modelBuilder.Entity<cart_items>()
                 .HasOne(ci => ci.CartItemStatus)
@@ -66,11 +67,10 @@ namespace Laptops.Data
             .HasForeignKey(o => o.employee_id);
 
             modelBuilder.Entity<cart_items>()
-     .HasOne(ci => ci.Order)
-     .WithMany(o => o.CartItems)
-     .HasForeignKey(ci => ci.order_id);
+             .HasOne(ci => ci.Order)
+             .WithMany(o => o.CartItems)
+             .HasForeignKey(ci => ci.order_id);
 
-        }
-
+        } 
     }
 }

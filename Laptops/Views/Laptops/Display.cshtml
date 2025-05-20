@@ -16,6 +16,8 @@
     @{
         var firstLaptop = Model.FirstOrDefault();
     }
+
+    <!--Hero Section-->
     <div class="bg-gradient-to-b from-[#1F44BB] via-[#EEF3FF] to-white py-20">
         <div class="flex flex-col md:flex-row items-center justify-center px-6 md:px-16 py-10 gap-10">
             <!-- Left Column -->
@@ -62,7 +64,7 @@
                         <span class="font-semibold text-orange-500">Storage:</span> @firstLaptop.Storage
                     </p>
                     <p class="text-green-600 font-bold text-lg mt-2">R @firstLaptop.Price</p>
-                    <button class="group mt-4 inline-flex items-center justify-center bg-[#73AC4B] text-white px-4 py-2 rounded-full  view-details-btn hover:bg-blue-800 transition-all duration-300" >
+                    <button class="group mt-4 inline-flex items-center justify-center bg-[#73AC4B] text-white px-4 py-2 rounded-full view-details-btn hover:bg-blue-800 transition-all duration-300" >
                         View Details
                         <i class="fas fa-arrow-right transform transition-transform duration-300 group-hover:translate-x-1"></i>
                     </button>
@@ -71,14 +73,7 @@
 
         </div>
     </div>
-	<div class="flex justify-center mt-10">
-		<h2 class="text-2xl font-semibold text-gray-800">Actions</h2>
-            <button onclick="updateLaptopStatus('AddToCart', 5)">Add to Cart</button>
-            <button onclick="updateLaptopStatus('DeleteCartItem', 5)">Delete Cart</button>
-            <button onclick="updateLaptopStatus('AddToOrders', 5)">Make Request</button>
-            <button onclick="updateLaptopStatus('DeleteOrder', 5)">Delete Order</button>
-	</div>
-
+	
 
     <!-- Filters & Sort Section -->
     <div class="max-w-7xl mx-auto mt-10 px-4">
@@ -132,8 +127,8 @@
     </div>
 
 
-        <!-- Laptops Grid Section -->
-        <div class="mt-16 px-6 md:px-16">
+     <!-- Laptops Grid Section -->
+     <div class="mt-16 px-6 md:px-16">
             <h2 class="text-2xl font-semibold text-gray-800 mb-6">All Available Laptops</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 @foreach (var laptop in Model)
@@ -414,24 +409,7 @@
                 });
             });
         });
-                function updateLaptopStatus(action, laptopId) {
-            fetch(`/Laptops/${action}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ id: laptopId })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    console.log(`✅ Status updated for laptop ${laptopId} via ${action}`);
-                    location.reload(); // Optional: refresh to reflect new status
-                } else {
-                    console.warn(`❌ Failed to update status for laptop ${laptopId}`);
-                }
-            });
-        }
+         
 
 
         addToCartBtn.addEventListener('click', function () {
@@ -481,11 +459,6 @@
                     }, 2000);
                 });
         });
-
-
-
-        
-
     </script>
 
 

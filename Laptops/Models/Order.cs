@@ -7,19 +7,17 @@ public class Orders
     [Key]
     public int order_id { get; set; }
 
-    public int employee_id { get; set; }
+    public int? employee_id { get; set; }  // Make nullable
     public DateTime order_date { get; set; }
-
     public int total_amount { get; set; }
-    // Foreign key to order_status
-    public int order_status_id { get; set; }
+
+    public int? order_status_id { get; set; }  // Make nullable
 
     [ForeignKey(nameof(order_status_id))]
-    public required order_status OrderStatus { get; set; }
+    public order_status? OrderStatus { get; set; }  // Make nullable
 
     [ForeignKey(nameof(employee_id))]
-    public required Employee Employee { get; set; }
+    public Employee? Employee { get; set; } // Make nullable
 
-    public ICollection<cart_items> CartItems { get; set; }
-
+    public ICollection<cart_items>? CartItems { get; set; }
 }

@@ -90,7 +90,7 @@ public class LaptopService
             }
 
             // Cache for 5 minutes
-            _cache.Set(userCacheKey, laptops, TimeSpan.FromMinutes(5));
+            _cache.Set(userCacheKey, laptops, TimeSpan.FromMinutes(15));
 
             return laptops;
         }
@@ -100,5 +100,35 @@ public class LaptopService
             return new List<LaptopViewModel>();
         }
     }
-    
+    public bool UpdateLaptopStatusInCache(int laptopId, int newStatus)
+    {
+        string? employeeIdStr = _httpContextAccessor.HttpContext?.Session.GetString("EmployeeId");
+        if (!int.TryParse(employeeIdStr, out int employeeId))
+        {
+            _logger.LogWarning("Could not find valid EmployeeId in session.");
+            return false;
+        }
+
+        string userCacheKey = $"LaptopList_{employeeId}";
+
+        if (_cache.TryGetValue(userCacheKey, out List<LaptopViewModel> cachedLaptops))
+        {
+            var laptop = cachedLaptops.FirstOrDefault(l => l.LaptopId == laptopId);
+            if (laptop != null)
+            {
+                laptop.userLaptopStatus = newStatus;
+
+                // Optional: re-set the cache with updated value and expiry
+                _cache.Set(userCacheKey, cachedLaptops, TimeSpan.FromMinutes(15));
+
+                _logger.LogInformation("✅ Updated status for laptop ID {LaptopId} to {Status}", laptopId, newStatus);
+                return true;
+            }
+        }
+
+        _logger.LogWarning("⚠️ Could not update status — cache not found or laptop not in cache");
+        return false;
+    }
+
+
 }

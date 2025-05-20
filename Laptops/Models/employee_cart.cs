@@ -14,5 +14,8 @@ namespace Laptops.Models
         public DateTime created_at { get; set; }
 
         public Employee Employee { get; set; }
+
+        // ✅ Add this line to enable EF to load related cart_items
+        public ICollection<cart_items> CartItems { get; set; } = new List<cart_items>();
     }
 }
