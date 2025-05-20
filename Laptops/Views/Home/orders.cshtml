@@ -1,23 +1,67 @@
-﻿@model List<OrderViewModel>
+﻿<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <title>Laptop Exchange</title>
+</head>
+@model List<OrderViewModel>
 
-<h2 class="text-2xl font-bold mb-4">My Orders</h2>
+<div class="max-w-6xl mx-auto p-6">
+    <h2 class="text-3xl font-bold text-center mb-10">Orders</h2>
 
-@foreach (var order in Model)
-{
-    <div class="mb-6 p-4 border rounded shadow">
-        <h3 class="text-lg font-semibold">Order #@order.OrderId</h3>
-        <p>Date: @order.OrderDate.ToShortDateString()</p>
-        <p>Status: <strong>@order.Status</strong></p>
-        <p>Total: R @order.TotalAmount</p>
+    <div class="grid grid-cols-4 font-semibold text-lg border-b-2 border-gray-800 pb-2 mb-4">
+        <div></div>
+        <div class="text-left">Laptop</div>
+        <div class="text-center">Date</div>
+        <div class="text-center">Status</div>
+    </div>
 
-        <ul class="mt-3 space-y-2">
+    @{
+        int index = 1;
+    }
+
+    @foreach (var order in Model)
+    {
+        <div class="border-2 border-green-600 rounded-lg p-6 mb-8 bg-white shadow-md">
             @foreach (var laptop in order.Laptops)
             {
-                <li class="border-b pb-2">
-                    <strong>@laptop.Brand @laptop.Model</strong> — R @laptop.Price
-                    <div class="text-sm text-gray-600">Specs: @laptop.Ram RAM, @laptop.Storage Storage, @laptop.ScreenSize" screen</div>
-                </li>
+                <div class="grid grid-cols-4 items-center gap-6 mb-6">
+                    <!-- Index -->
+                    <div class="text-center text-lg font-medium">@index</div>
+
+                    <!-- Laptop Info -->
+                    <div class="flex items-center gap-4">
+                        <img src="@Url.Content("~/" + laptop.ImgUrl)" alt="@laptop.Model" class="w-16 h-16 object-cover rounded-lg shadow-sm" />
+                        <div>
+                            <div class="font-semibold">@laptop.Brand @laptop.Model</div>
+                            <p class="text-sm text-gray-600">@laptop.Description</p>
+                        </div>
+                    </div>
+
+                    <!-- Dates -->
+                    <div class="text-center text-sm text-gray-700">
+                        <div><span class="font-bold">Order:</span> @order.OrderDate.ToString("dd/MM/yyyy")</div>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="text-center">
+                        <span class="block font-semibold text-lg
+                            @(order.Status.ToLower() == "pending" ? "text-yellow-500" :
+                              order.Status.ToLower() == "approved" ? "text-green-600" :
+                              order.Status.ToLower() == "cancelled" ? "text-red-500" : "text-gray-600")">
+                            @order.Status
+                        </span>
+                        <a href="/Orders/Cancel/@order.OrderId" class="text-red-500 text-xs hover:underline mt-1 inline-block">
+                            Cancel<br />Order
+                        </a>
+                    </div>
+                </div>
+                index++;
             }
-        </ul>
-    </div>
-}
+        </div>
+    }
+
+    <div class="text-xl font-semibold mt-6 text-right pr-4">Total:</div>
+</div>
+
