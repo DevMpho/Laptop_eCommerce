@@ -13,6 +13,7 @@
         public string? Color { get; set; }
         public int BatteryLife { get; set; }
         public int LaptopId { get; set; }
+        public bool IsInCart { get; set; }
 
         public string? Role { get; set; }
 
