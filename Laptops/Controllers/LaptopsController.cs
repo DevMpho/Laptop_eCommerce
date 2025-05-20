@@ -50,38 +50,6 @@ namespace Laptops.Controllers
 
             return PartialView("_LaptopDetails", laptop);  // Returns the partial view with laptop details
         }
-        [HttpPost]
-        public IActionResult AddToCart([FromBody] LaptopIdRequest request)
-        {
-            _logger.LogInformation($"🛒 Add to cart for Laptop ID: {request.Id}");
-            var result = _statusUpdater.UpdateLaptopStatusById(request.Id, 1);
-            return Json(new { success = result });
-        }
- 
-
-        [HttpPost]
-        public IActionResult DeleteCartItem(int id)
-        {
-            _logger.LogInformation($"❌ Delete cart item for Laptop ID: {id}");
-            var result = _statusUpdater.UpdateLaptopStatusById(id, 0); // 0 = Available
-            return Json(new { success = result });
-        }
-
-        [HttpPost]
-        public IActionResult AddToOrders(int id)
-        {
-            _logger.LogInformation($"📦 Make request (order) for Laptop ID: {id}");
-            var result = _statusUpdater.UpdateLaptopStatusById(id, 2); // 2 = Ordered by current user
-            return Json(new { success = result });
-        }
-
-        [HttpPost]
-        public IActionResult DeleteOrder(int id)
-        {
-            _logger.LogInformation($"🗑️ Delete order for Laptop ID: {id}");
-            var result = _statusUpdater.UpdateLaptopStatusById(id, 1); // 1 = Back to In Cart
-            return Json(new { success = result });
-        }
 
 
     }
