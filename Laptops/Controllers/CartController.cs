@@ -7,10 +7,12 @@ using Laptops.Data;
 public class CartController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly LaptopService _laptopService;
 
-    public CartController(ApplicationDbContext context)
+    public CartController(ApplicationDbContext context, LaptopService laptopService)
     {
         _context = context;
+        _laptopService = laptopService;
     }
 
     [HttpPost]
@@ -49,8 +51,13 @@ public class CartController : Controller
 
         // Count cart items
         int count = _context.CartItems.Count(ci => ci.employeecart_id == cart.employeecart_id);
+        bool updated = _laptopService.UpdateLaptopStatusInCache(laptopId, 1); // 1 = in basket
 
-        return Json(new { success = true, cartCount = count });
+        if (updated)
+            return Json(new { success = true });
+        else
+            return Json(new { success = false, message = "Could not update laptop status." });
+        
     }
 
     [HttpGet]
@@ -67,41 +74,54 @@ public class CartController : Controller
         if (cart != null)
         {
             count = _context.CartItems
-                            .Where(ci => ci.employeecart_id == cart.employeecart_id)
+                            .Where(ci => ci.employeecart_id == cart.employeecart_id && ci.order_id == null)
                             .Count();
         }
 
         return Json(new { count });
     }
 
+
     public IActionResult Sidebar()
     {
         var employeeIdStr = HttpContext.Session.GetString("EmployeeId");
-        if (string.IsNullOrEmpty(employeeIdStr)) return PartialView("_CartSidebar", new List<cart_items>());
+        if (string.IsNullOrEmpty(employeeIdStr))
+            return PartialView("_CartSidebar", new List<cart_items>());
 
         int employeeId = int.Parse(employeeIdStr);
         var cart = _context.EmployeeCarts.FirstOrDefault(c => c.employee_id == employeeId);
-        if (cart == null) return PartialView("_CartSidebar", new List<cart_items>());
+        if (cart == null)
+            return PartialView("_CartSidebar", new List<cart_items>());
 
         var items = _context.CartItems
-            .Where(ci => ci.employeecart_id == cart.employeecart_id)
+            .Where(ci => ci.employeecart_id == cart.employeecart_id && ci.order_id == null)  // Exclude ordered items
             .Include(ci => ci.Laptop)
             .ThenInclude(l => l!.LaptopDetails)
             .ToList();
 
-        return PartialView("_CartSidebar", items); 
+        return PartialView("_CartSidebar", items);
     }
-
 
 
     [HttpPost]
     public IActionResult RemoveFromCart(int id)
     {
-        var item = _context.CartItems.FirstOrDefault(ci => ci.cartitems_id == id);
+        var item = _context.CartItems
+            .Include(ci => ci.Laptop) // Include Laptop to access laptopId
+            .FirstOrDefault(ci => ci.cartitems_id == id);
+
         if (item != null)
         {
+            int? laptopId = item.Laptop?.laptops_id;
+
             _context.CartItems.Remove(item);
             _context.SaveChanges();
+
+            // ✅ Update status in cache to available
+            if (laptopId.HasValue)
+            {
+                _laptopService.UpdateLaptopStatusInCache(laptopId.Value, 0); // 0 = available
+            }
         }
 
         // Get current employeeId from session
@@ -124,9 +144,50 @@ public class CartController : Controller
 
         return PartialView("_CartSidebar", updatedCartItems);
     }
+    [HttpPost]
+    public IActionResult Orders(int totalAmount)
+    {
+        var employeeIdStr = HttpContext.Session.GetString("EmployeeId");
+        if (string.IsNullOrEmpty(employeeIdStr))
+            return Unauthorized("User not logged in.");
 
+        int employeeId = int.Parse(employeeIdStr);
 
+        var employeeCart = _context.EmployeeCarts.FirstOrDefault(c => c.employee_id == employeeId);
+        if (employeeCart == null)
+            return BadRequest("Employee cart not found.");
 
+        var cartItems = _context.CartItems
+            .Where(ci => ci.employeecart_id == employeeCart.employeecart_id && ci.order_id == null)
+            .ToList();
 
+        if (!cartItems.Any())
+            return BadRequest("No items in cart to place order.");
+
+        var newOrder = new Orders
+        {
+            employee_id = employeeId,
+            order_date = DateTime.Now,
+            order_status_id = 0, // Pending
+            total_amount = totalAmount,
+        };
+
+        _context.Orders.Add(newOrder);
+        _context.SaveChanges();
+
+        // Assign order_id to cart items
+        foreach (var item in cartItems)
+        {
+            item.order_id = newOrder.order_id;
+        }
+        _context.SaveChanges();
+
+        // Option 1: Remove cart items completely (clear cart)
+        _context.CartItems.RemoveRange(cartItems);
+        _context.SaveChanges();
+
+        return RedirectToAction("Orders", "Home");
+
+    }
 
 }
