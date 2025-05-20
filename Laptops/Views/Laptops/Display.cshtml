@@ -138,8 +138,9 @@
                      data-imgurl="@laptop.ImgUrl" data-model="@laptop.Model" data-storage="@laptop.Storage"
                      data-screensize="@laptop.ScreenSize" data-color="@laptop.Color"
                      data-description="@laptop.Description" data-laptopid="@laptop.LaptopId"
-                     data-batterycondition="@laptop.BatteryLife" data-role="@laptop.Role">
-
+                     data-batterycondition="@laptop.BatteryLife" data-role="@laptop.Role"
+                     data-existsincart="@laptop.IsInCart"
+                     >
 
                         <img src="@Url.Content("~/" + laptop.ImgUrl)" alt="@laptop.Model" class="w-full h-36 object-contain mb-4 rounded" />
 
@@ -357,6 +358,21 @@
                     const laptopId = card.dataset.laptopid;
                     addToCartBtn.setAttribute('data-laptop-id', laptopId);
 
+                    card.id = 'laptop-card+'+laptopId;
+
+                    if (card.dataset.existsincart === 'True') {
+                        addToCartBtn.disabled = true;
+                        addToCartBtn.textContent = 'Already In Cart';
+                        addToCartBtn.style.backgroundColor = 'grey';
+                        addToCartBtn.style.cursor = 'not-allowed';
+                    } else {
+                        addToCartBtn.disabled = false;
+                        addToCartBtn.textContent = 'Add to Cart';
+                        addToCartBtn.style.cursor = 'pointer';
+                        addToCartBtn.style.backgroundColor = 'rgb(115 172 75 / var(--tw-bg-opacity, 1))';
+                        addToCartBtn.className = "text-center bg-green-600 text-white py-2 rounded-md font-semibold hover:bg-green-700 flex items-center justify-center gap-2";
+                    }
+
                     // ✅ Set Role and Icon
                     const role = card.dataset.role;
                     modalRole.textContent = role;
@@ -433,16 +449,17 @@
                         updateCartCount();
                         // Wait 1 second before changing to "Added"
                         setTimeout(() => {
-                            button.textContent = "Added";
+                            button.textContent = "Already In Cart";
+                            button.style.backgroundColor = 'grey';
+                            button.style.cursor = 'not-allowed';
+                            button.disabled = true;
 
-                            // Then wait another 2 seconds to reset
-                            setTimeout(() => {
-                                button.textContent = originalText;
-                                button.disabled = false;
-                            }, 2000);
+                            // Disable item from being to cart again
+                            const card = document.getElementById('laptop-card+' + laptopId);
+                            if (card) {
+                                card.setAttribute('data-existsincart', 'True');
+                            }
                         }, 1000);
-
-                        updateCartCount();
                     } else {
                         button.textContent = "Failed";
                         setTimeout(() => {
