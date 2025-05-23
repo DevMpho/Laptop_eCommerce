@@ -19,6 +19,7 @@ namespace Laptops.Models
         public string? description { get; set; }
         public string? color { get; set; }
         public string? imgUrl { get; set; }
+
         public required laptop_details LaptopDetails { get; set; }
     }
 }

@@ -19,6 +19,9 @@ namespace Laptops.Data
         public DbSet<laptops> Laptops { get; set; }
         public DbSet<cart_item_status> CartItemStatuses { get; set; }
         public DbSet<cart_items> CartItems { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,6 +36,8 @@ namespace Laptops.Data
             modelBuilder.Entity<laptops>().ToTable("Laptops");
             modelBuilder.Entity<cart_item_status>().ToTable("cart_item_status");
             modelBuilder.Entity<cart_items>().ToTable("cart_items");
+            modelBuilder.Entity<Role>().ToTable("Role");
+
 
             // ✅ Relationship configurations to prevent EF from guessing wrong column names
             modelBuilder.Entity<cart_items>()
@@ -42,8 +47,9 @@ namespace Laptops.Data
 
             modelBuilder.Entity<cart_items>()
                 .HasOne(ci => ci.EmployeeCart)
-                .WithMany()
+                .WithMany(ec => ec.CartItems)
                 .HasForeignKey(ci => ci.employeecart_id);
+
 
             modelBuilder.Entity<cart_items>()
                 .HasOne(ci => ci.CartItemStatus)
@@ -66,11 +72,17 @@ namespace Laptops.Data
             .HasForeignKey(o => o.employee_id);
 
             modelBuilder.Entity<cart_items>()
-     .HasOne(ci => ci.Order)
-     .WithMany(o => o.CartItems)
-     .HasForeignKey(ci => ci.order_id);
+             .HasOne(ci => ci.Order)
+             .WithMany(o => o.CartItems)
+             .HasForeignKey(ci => ci.order_id);
+
+            modelBuilder.Entity<Role>().HasData(
+                new Role { RoleId = 1, RoleName = "MSP" },
+                new Role { RoleId = 2, RoleName = "Finance" },
+                new Role { RoleId = 3, RoleName = "HR" }
+);
+
 
         }
-
     }
 }
