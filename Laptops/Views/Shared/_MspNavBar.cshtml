@@ -1,0 +1,66 @@
+﻿@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var context = HttpContextAccessor.HttpContext;
+    var initials = context?.Session.GetString("Initials") ?? "NA";
+    var email = context?.Session.GetString("Email") ?? "Not logged in";
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    bool isOnMspOrdersPage = currentController == "Home" && currentAction == "MSPOrders";
+}
+
+<header class="fixed top-0 left-0 right-0 bg-[#5c7f6b] px-6 py-3 z-50 shadow-md">
+    <div class="flex items-center justify-between">
+        <!-- Logo -->
+        <a href="@Url.Action("MSPOrders", "Home")" class="flex items-center space-x-2">
+            <img src="/images/logo.webp" alt="mint logo" class="h-14 w-32" />
+        </a>
+
+        <!-- Hamburger Button (Mobile Only) -->
+        <button class="md:hidden text-white text-2xl" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center space-x-6 text-white text-sm">
+            @if (!isOnMspOrdersPage)
+            {
+                <a asp-controller="Home" asp-action="MSPOrders" class="hover:text-green-300 transition">Orders</a>
+            }
+
+            @if (initials != "NA")
+            {
+                <div class="w-10 h-10 bg-blue-900 text-white rounded-full flex items-center justify-center text-sm font-bold" title="@email">
+                    @initials
+                </div>
+            }
+
+            <a href="@Url.Action("MspLogin", "Account")" class="hover:text-red-500 transition" title="Logout">
+                <i class="fas fa-sign-out-alt text-xl"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobileMenu" class="md:hidden hidden mt-3 space-y-4 text-white text-sm">
+        @if (!isOnMspOrdersPage)
+        {
+            <a asp-controller="Home" asp-action="MSPOrders" class="block hover:text-green-300">Orders</a>
+        }
+
+        @if (initials != "NA")
+        {
+            <div class="w-10 h-10 bg-blue-900 text-white rounded-full flex items-center justify-center text-sm font-bold" title="@email">
+                @initials
+            </div>
+        }
+
+        <a href="@Url.Action("MspLogin", "Account")" class="block hover:text-red-500">Logout</a>
+    </div>
+</header>
+
+<script>
+    function toggleMobileMenu() {
+        const menu = document.getElementById("mobileMenu");
+        menu.classList.toggle("hidden");
+    }
+</script>
