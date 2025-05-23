@@ -131,36 +131,51 @@
      <div class="mt-16 px-6 md:px-16">
             <h2 class="text-2xl font-semibold text-gray-800 mb-6">All Available Laptops</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                @foreach (var laptop in Model)
-                {
-                <div class="bg-white rounded-xl border shadow-md p-4 text-center laptop-card data-laptopid=" @laptop.LaptopId""
-                     data-brand="@laptop.Brand" data-ram="@laptop.Ram" data-price="@laptop.Price"
-                     data-imgurl="@laptop.ImgUrl" data-model="@laptop.Model" data-storage="@laptop.Storage"
-                     data-screensize="@laptop.ScreenSize" data-color="@laptop.Color"
-                     data-description="@laptop.Description" data-laptopid="@laptop.LaptopId"
-                     data-batterycondition="@laptop.BatteryLife" data-role="@laptop.Role"
-                     data-existsincart="@laptop.IsInCart"
-                     >
+                @{
+    var statusMap = ViewBag.LaptopStatusMap as Dictionary<int, int> ?? new Dictionary<int, int>();
+}
 
-                        <img src="@Url.Content("~/" + laptop.ImgUrl)" alt="@laptop.Model" class="w-full h-36 object-contain mb-4 rounded" />
+@foreach (var laptop in Model)
+{
+    var status = statusMap.ContainsKey(laptop.LaptopId) ? statusMap[laptop.LaptopId] : 0;
+    var isGreyedOut = status == 1 || status == 2 || status == 3;
+    var statusText = status == 2 ? "Already ordered" : status == 3 ? "Reserved by another user" : status == 1 ? "Already In cart": "";
+    var cardClasses = isGreyedOut ? "opacity-50 cursor-not-allowed pointer-events-none" : "";
+    
+    <div class="bg-white rounded-xl border shadow-md p-4 text-center laptop-card @cardClasses"
+         data-laptopid="@laptop.LaptopId"
+         data-brand="@laptop.Brand" data-ram="@laptop.Ram" data-price="@laptop.Price"
+         data-imgurl="@laptop.ImgUrl" data-model="@laptop.Model" data-storage="@laptop.Storage"
+         data-screensize="@laptop.ScreenSize" data-color="@laptop.Color"
+         data-description="@laptop.Description" data-batterycondition="@laptop.BatteryLife"
+         data-role="@laptop.Role" data-existsincart="@laptop.IsInCart">
 
-                        <div class="flex flex-wrap gap-2 justify-center mb-3">
-                            <span class="bg-[#73AC4B] text-white text-xs font-semibold px-3 py-1 rounded-full">@laptop.Brand</span>
-                            <span class="bg-blue-700 text-white text-xs font-semibold px-3 py-1 rounded-full">@laptop.Ram</span>
-                            <span class="bg-blue-700 text-white text-xs font-semibold px-3 py-1 rounded-full">@laptop.Storage</span>
-                        </div>
+        <img src="@Url.Content("~/" + laptop.ImgUrl)" alt="@laptop.Model"
+             class="w-full h-36 object-contain mb-4 rounded" />
 
-                        <h3 class="text-base font-medium text-gray-800">@laptop.Brand @laptop.Model</h3>
-                        <p class="text-lg font-bold text-blue-700 mt-1">R @laptop.Price</p>
+        <div class="flex flex-wrap gap-2 justify-center mb-3">
+            <span class="bg-[#73AC4B] text-white text-xs font-semibold px-3 py-1 rounded-full">@laptop.Brand</span>
+            <span class="bg-blue-700 text-white text-xs font-semibold px-3 py-1 rounded-full">@laptop.Ram</span>
+            <span class="bg-blue-700 text-white text-xs font-semibold px-3 py-1 rounded-full">@laptop.Storage</span>
+        </div>
 
-                    <button class="group mt-4 mx-auto block w-40 text-center bg-[#73AC4B] text-white px-5 py-2.5 rounded-full view-details-btn hover:bg-blue-800 transition-all duration-300">
-                        View Details
-                        <i class="fas fa-arrow-right ml-2 transform transition-transform duration-300 group-hover:translate-x-1"></i>
-                    </button>
+        <h3 class="text-base font-medium text-gray-800">@laptop.Brand @laptop.Model</h3>
+        <p class="text-lg font-bold text-blue-700 mt-1">R @laptop.Price</p>
 
+        @if (!string.IsNullOrEmpty(statusText))
+        {
+            <p class="text-sm font-semibold text-red-600 mt-2">@statusText</p>
+        }
+        else
+        {
+            <button class="group mt-4 mx-auto block w-40 text-center bg-[#73AC4B] text-white px-5 py-2.5 rounded-full view-details-btn hover:bg-blue-800 transition-all duration-300">
+                View Details
+                <i class="fas fa-arrow-right ml-2 transform transition-transform duration-300 group-hover:translate-x-1"></i>
+            </button>
+        }
+    </div>
+}
 
-                </div>
-            }
         </div>
     </div>
 

@@ -20,10 +20,12 @@ namespace Laptops.Helpers
             _logger = logger;
             _cache = cache;
         }
+
         private string GetCacheKey(int employeeId) => $"UserOrders_{employeeId}";
+
         /// <summary>
         /// Returns a map of LaptopId to userLaptopStatus:
-        /// 0 = Available (not listed in the dictionary)
+        /// 0 = Available (not listed)
         /// 1 = In Cart by current user
         /// 2 = Ordered by current user
         /// 3 = Ordered by another user
@@ -34,67 +36,82 @@ namespace Laptops.Helpers
             if (!int.TryParse(employeeIdStr, out int employeeId))
                 return new Dictionary<int, int>();
 
-
+            string userCacheKey = $"LaptopList_{employeeId}";
             var statusMap = new Dictionary<int, int>();
 
-            // In Cart (status_id = 0) by current user
-            var inCartLaptops = await (
-                from ci in _context.CartItems
-                join ec in _context.EmployeeCarts on ci.employeecart_id equals ec.employeecart_id
-                where ec.employee_id == employeeId && ci.status_id == 0
-                select ci.laptops_id
-            ).ToListAsync();
-
-            foreach (var id in inCartLaptops)
-                statusMap[id] = 1; // 1 = In Cart
-
-            // Ordered by current user (status_id = 1)
-            var orderedByCurrentUser = await (
+            // Laptops in cart (status = 1) by current user
+            var inCart = await (
                 from ci in _context.CartItems
                 join ec in _context.EmployeeCarts on ci.employeecart_id equals ec.employeecart_id
                 where ec.employee_id == employeeId && ci.status_id == 1
                 select ci.laptops_id
             ).ToListAsync();
 
-            foreach (var id in orderedByCurrentUser)
-                statusMap[id] = 2; // 2 = Ordered by current user
+            foreach (var id in inCart)
+                statusMap[id] = 1;
 
-            // Ordered by other users (status_id = 1)
+            // Fetch all cart items for this user
+            var cartItems = await (
+                from ci in _context.CartItems
+                join ec in _context.EmployeeCarts on ci.employeecart_id equals ec.employeecart_id
+                where ec.employee_id == employeeId
+                select ci
+            ).ToListAsync();
+
+            _cache.TryGetValue(userCacheKey, out List<LaptopViewModel>? cachedLaptops);
+
+            foreach (var item in cartItems)
+            {
+                if (item.status_id == 2)
+                {
+                    statusMap[item.laptops_id] = 2;
+
+                    if (cachedLaptops != null)
+                    {
+                        var cached = cachedLaptops.FirstOrDefault(l => l.LaptopId == item.laptops_id);
+
+                        if (cached != null)
+                        {
+                            cached.OrderId = item.order_id; // This MUST happen
+                        }
+                    }
+                }
+            }
+
+
+            // Laptops ordered by *other* users (status = 2)
             var orderedByOthers = await (
                 from ci in _context.CartItems
                 join ec in _context.EmployeeCarts on ci.employeecart_id equals ec.employeecart_id
-                where ec.employee_id != employeeId && ci.status_id == 1
+                where ec.employee_id != employeeId && ci.status_id == 2
                 select ci.laptops_id
             ).ToListAsync();
 
             foreach (var id in orderedByOthers)
             {
                 if (!statusMap.ContainsKey(id))
-                    statusMap[id] = 3; // 3 = Ordered by others
+                    statusMap[id] = 3;
             }
 
             return statusMap;
         }
+
         public async Task<List<OrderViewModel>> GetEmployeeOrdersAsync(int employeeId)
         {
             try
             {
                 string cacheKey = GetCacheKey(employeeId);
 
-                // Check if the orders are cached
                 if (_cache.TryGetValue(cacheKey, out List<OrderViewModel> cachedOrders))
-                {
                     return cachedOrders;
-                }
 
-                // Fetch orders from the database
                 var orders = await _context.Orders
                     .Where(o => o.employee_id == employeeId)
                     .Include(o => o.OrderStatus)
                     .OrderByDescending(o => o.order_date)
                     .ToListAsync();
 
-                var orderViewModels = orders.Select(order => new OrderViewModel
+                var viewModels = orders.Select(order => new OrderViewModel
                 {
                     OrderId = order.order_id,
                     OrderDate = order.order_date,
@@ -103,46 +120,61 @@ namespace Laptops.Helpers
                     Laptops = new List<LaptopViewModel>()
                 }).ToList();
 
-                // Cache the result
-                _cache.Set(cacheKey, orderViewModels, TimeSpan.FromMinutes(30));
-
-                return orderViewModels;
+                _cache.Set(cacheKey, viewModels, TimeSpan.FromMinutes(30));
+                return viewModels;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "❌ Error fetching employee orders");
+                _logger.LogError(ex, "❌ Error fetching employee orders.");
                 return new List<OrderViewModel>();
             }
         }
 
         public void InvalidateEmployeeOrdersCache(int employeeId)
         {
-            string cacheKey = GetCacheKey(employeeId);
-            _cache.Remove(cacheKey);
+            _cache.Remove(GetCacheKey(employeeId));
         }
 
         public async Task<List<OrderViewModel>> GetUserOrdersAsync(List<LaptopViewModel> laptops)
         {
-            string? employeeIdStr = _httpContextAccessor.HttpContext?.Session.GetString("EmployeeId");
+            _logger.LogInformation("➡️ Entered GetUserOrdersAsync");
+
+            var employeeIdStr = _httpContextAccessor.HttpContext?.Session.GetString("EmployeeId");
             if (!int.TryParse(employeeIdStr, out int employeeId))
             {
-                _logger.LogWarning("No valid EmployeeId in session.");
+                _logger.LogWarning("⚠️ Invalid or missing EmployeeId in session.");
                 return new List<OrderViewModel>();
             }
 
             var orders = await GetEmployeeOrdersAsync(employeeId);
+            // Map order ID to laptop IDs for this employee
+            var orderLaptopMap = await (
+                from ci in _context.CartItems
+                join ec in _context.EmployeeCarts on ci.employeecart_id equals ec.employeecart_id
+                where ec.employee_id == employeeId && ci.status_id == 2 && ci.order_id != null
+                select new { ci.order_id, ci.laptops_id }
+            ).ToListAsync();
 
-            var orderedLaptops = laptops.Where(l => l.userLaptopStatus == 2).ToList();
+            var orderToLaptopIds = orderLaptopMap
+                .GroupBy(x => x.order_id)
+                .ToDictionary(g => g.Key!.Value, g => g.Select(x => x.laptops_id).ToList());
 
+            // Assign laptops to orders
             foreach (var order in orders)
             {
-                var laptopsForOrder = orderedLaptops.Where(l => l.LaptopId == order.OrderId).ToList();
-                order.Laptops.AddRange(laptopsForOrder);
+                if (orderToLaptopIds.TryGetValue(order.OrderId, out var laptopIds))
+                {
+                    order.Laptops = laptops
+                        .Where(l => laptopIds.Contains(l.LaptopId))
+                        .ToList();
+                }
+
+                _logger.LogInformation("🧾 Order ID: {OrderId}, Date: {Date}, Status: {Status}, Laptops: {Count}",
+                    order.OrderId, order.OrderDate, order.Status, order.Laptops.Count);
             }
+
 
             return orders;
         }
-
-
     }
 }

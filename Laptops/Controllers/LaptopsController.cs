@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Laptops.Models;
 using Laptops.Services;
+using Laptops.Helpers;
 
 namespace Laptops.Controllers
 {
@@ -9,19 +10,21 @@ namespace Laptops.Controllers
         private readonly LaptopService _laptopService;
         private readonly ILogger<LaptopsController> _logger;
         private readonly LaptopStatusUpdater _statusUpdater;
+        private readonly LaptopStatusHelper _laptopStatusHelper;
         List<LaptopViewModel> laptops;
 
-        public LaptopsController(LaptopService laptopService, ILogger<LaptopsController> logger, LaptopStatusUpdater statusUpdater)
+        public LaptopsController(LaptopService laptopService, ILogger<LaptopsController> logger, LaptopStatusUpdater statusUpdater, LaptopStatusHelper laptopStatusHelper)
         {
             _laptopService = laptopService;
             _logger = logger;
             _statusUpdater = statusUpdater;
+            _laptopStatusHelper = laptopStatusHelper;
         }
 
         // Display the list of laptops
         public async Task<IActionResult> Display()
         {
-            if(laptops == null)
+            if (laptops == null)
             {
                 laptops = await _laptopService.GetLaptopsAsync();
             }
@@ -30,9 +33,15 @@ namespace Laptops.Controllers
                 _logger.LogInformation("Using cached laptop data");
             }
 
-           
-            return View("Display", laptops);  // Loads Views/Laptops/Display.cshtml
+            // Get the laptop status map (you might need to inject a service for this)
+            var laptopStatusMap = await _laptopStatusHelper.GetLaptopStatusMapAsync();
+
+            // Pass status map to the ViewBag so your View can access it
+            ViewBag.LaptopStatusMap = laptopStatusMap;
+
+            return View("Display", laptops);
         }
+
 
         // Show details for a single laptop (called when clicking "View Details")
         public async Task<IActionResult> Details(int id)

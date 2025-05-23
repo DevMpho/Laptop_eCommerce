@@ -3,16 +3,19 @@ using Microsoft.EntityFrameworkCore;
 
 using Laptops.Models;
 using Laptops.Data;
+using Laptops.Helpers;
 
 public class CartController : Controller
 {
     private readonly ApplicationDbContext _context;
     private readonly LaptopService _laptopService;
+    private readonly LaptopStatusHelper _laptopStatusHelper;
 
-    public CartController(ApplicationDbContext context, LaptopService laptopService)
+    public CartController(ApplicationDbContext context, LaptopService laptopService, LaptopStatusHelper laptopStatusHelper)
     {
         _context = context;
         _laptopService = laptopService;
+        _laptopStatusHelper = laptopStatusHelper;
     }
 
     [HttpPost]
@@ -51,7 +54,7 @@ public class CartController : Controller
 
         // Count cart items
         int count = _context.CartItems.Count(ci => ci.employeecart_id == cart.employeecart_id);
-        bool updated = _laptopService.UpdateLaptopStatusInCache(laptopId, 1); // 1 = in basket
+        bool updated = _laptopService.AddToCart(laptopId); // 1 = in basket
 
         if (updated)
             return Json(new { success = true });
@@ -120,7 +123,7 @@ public class CartController : Controller
             // ✅ Update status in cache to available
             if (laptopId.HasValue)
             {
-                _laptopService.UpdateLaptopStatusInCache(laptopId.Value, 0); // 0 = available
+                _laptopService.DeleteCartItem(laptopId.Value); // 0 = available
             }
         }
 
@@ -145,7 +148,8 @@ public class CartController : Controller
         return PartialView("_CartSidebar", updatedCartItems);
     }
     [HttpPost]
-    public IActionResult Orders(int totalAmount)
+    [HttpPost]
+    public async Task<IActionResult> Orders(int totalAmount)
     {
         var employeeIdStr = HttpContext.Session.GetString("EmployeeId");
         if (string.IsNullOrEmpty(employeeIdStr))
@@ -168,26 +172,27 @@ public class CartController : Controller
         {
             employee_id = employeeId,
             order_date = DateTime.Now,
-            order_status_id = 0, // Pending
+            order_status_id = 1, // Pending
             total_amount = totalAmount,
         };
 
         _context.Orders.Add(newOrder);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         // Assign order_id to cart items
         foreach (var item in cartItems)
         {
             item.order_id = newOrder.order_id;
+            item.status_id = 2;  // now “ordered”
+            _laptopService.AddToOrders(item.laptops_id); // updates laptop cache status
         }
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
-        // Option 1: Remove cart items completely (clear cart)
-        _context.CartItems.RemoveRange(cartItems);
-        _context.SaveChanges();
+        // ─── invalidate the cached orders for this user ─────
+        _laptopStatusHelper.InvalidateEmployeeOrdersCache(employeeId);
 
         return RedirectToAction("Orders", "Home");
-
     }
+
 
 }

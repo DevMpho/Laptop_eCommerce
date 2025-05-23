@@ -96,6 +96,13 @@ namespace Laptops.Controllers
 
             return View(); // This looks for Views/Home/LaptopDetails.cshtml
         }
+        [HttpPost]
+        public async Task<IActionResult> CancelOrder(int orderId, int laptopId)
+        {
+            // Remove the specific laptop from the cart/order
+            await _laptopService.CancelLaptopOrderAsync(orderId, laptopId); 
+            return RedirectToAction("Orders");
+        }
 
         public async Task<IActionResult> Orders()
         {
