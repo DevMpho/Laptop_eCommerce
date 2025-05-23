@@ -1,4 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
+using Laptops.Models;
 
 public class Employee
 {
@@ -10,5 +13,10 @@ public class Employee
     public string? firstname { get; set; }
     public string? lastname { get; set; }
     public string? contactnumber { get; set; }
+
+    // New foreign key
+    public int RoleId { get; set; }
+    [ForeignKey("RoleId")]
+    public Role? Role { get; set; }
 
 }

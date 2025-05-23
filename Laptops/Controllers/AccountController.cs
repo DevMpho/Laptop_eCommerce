@@ -28,15 +28,16 @@ namespace Laptops.Controllers
                 return View();
             }
 
-            // Fetch the required fields only to avoid casting issues
             var user = _context.Employees
-                .Where(u => !string.IsNullOrEmpty(u.Email) && u.Email.ToLower() == email.ToLower())
+                .Where(u => u.Email.ToLower() == email.ToLower())
                 .Select(u => new
                 {
                     u.Email,
                     u.firstname,
                     u.lastname,
-                    u.employee_id
+                    u.employee_id,
+                    u.RoleId,
+                    RoleName = u.Role.RoleName
                 })
                 .FirstOrDefault();
 
@@ -54,16 +55,20 @@ namespace Laptops.Controllers
             HttpContext.Session.SetString("Initials", initials);
             HttpContext.Session.SetString("Email", user.Email);
             HttpContext.Session.SetString("EmployeeId", user.employee_id.ToString());
+            HttpContext.Session.SetString("RoleId", user.RoleId.ToString());
+            HttpContext.Session.SetString("RoleName", user.RoleName);
 
-
-            // Redirect based on email domain
-            if (user.Email.EndsWith("@mintgroupmasp.net", StringComparison.OrdinalIgnoreCase))
+            // Redirect based on role
+            switch (user.RoleId)
             {
-                return RedirectToAction("MspLogin");
+                case 1: // MSP
+                    return RedirectToAction("MspLogin", "Account");
+                
+                default:
+                    return RedirectToAction("Display", "Laptops");
             }
-
-            return RedirectToAction("Display", "Laptops");
         }
+
 
 
         public IActionResult Logout()
