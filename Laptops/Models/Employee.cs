@@ -12,11 +12,11 @@ public class Employee
     public string Email { get; set; }
     public string? firstname { get; set; }
     public string? lastname { get; set; }
-    public string? contactnumber { get; set; }
+    public long? contactnumber { get; set; }
 
     // New foreign key
     public int RoleId { get; set; }
-    [ForeignKey("RoleId")]
+    [ForeignKey("RoleId")] 
     public Role? Role { get; set; }
 
 }
