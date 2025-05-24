@@ -148,7 +148,7 @@ public class CartController : Controller
         return PartialView("_CartSidebar", updatedCartItems);
     }
     [HttpPost]
-    [HttpPost]
+    
     public async Task<IActionResult> Orders(int totalAmount)
     {
         var employeeIdStr = HttpContext.Session.GetString("EmployeeId");

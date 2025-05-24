@@ -1,61 +1,64 @@
 ﻿@model List<Laptops.Models.OrderViewModel>
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <title>Laptop Exchange</title>
+    
 </head>
-<body class="min-h-screen font-sans">
+<body class="font-sans">
 
     @Html.Partial("_NavBar")
-<div class="max-w-6xl mx-auto p-6">
-    <h2 class="text-3xl font-bold text-center mb-10">Orders</h2>
 
-    @if (Model == null || Model.Count == 0)
-    {
-        <div class="text-center text-gray-600 text-lg mt-20">
-            You have no orders yet.
-        </div>
-    }
-    else
-    {
-        <div class="grid grid-cols-4 font-semibold text-lg border-b-2 border-gray-800 pb-2 mb-4">
-            <div></div>
-            <div class="text-left">Laptop</div>
-            <div class="text-center">Date</div>
-            <div class="text-center">Status</div>
-        </div>
+    
+        <h2 class="text-3xl font-bold text-center mb-10">Orders</h2>
 
-        var index = 1;
-
-        foreach (var order in Model)
+        @if (Model == null || Model.Count == 0)
         {
-            <div class="border-2 border-green-600 rounded-lg p-6 mb-8 bg-white shadow-md">
-                @foreach (var laptop in order.Laptops)
-                {
-                    <div class="grid grid-cols-4 items-center gap-6 mb-6">
-                        <div class="text-center text-lg font-medium">@index</div>
-                        <div class="flex items-center gap-4">
-                            <img src="@Url.Content("~/" + laptop.ImgUrl)" alt="@laptop.Model" class="w-16 h-16 object-cover rounded-lg shadow-sm" />
-                            <div>
-                                <div class="font-semibold">@laptop.Brand @laptop.Model</div>
-                                <p class="text-sm text-gray-600">@laptop.Description</p>
-                            </div>
-                        </div>
-                        <div class="text-center text-sm text-gray-700">
-                            <div><span class="font-bold">Order:</span> @order.OrderDate.ToString("dd/MM/yyyy")</div>
-                        </div>
-                        <div class="text-center">
-                            <span class="block font-semibold text-lg
-                                @(order.Status.ToLower() == "pending" ? "text-yellow-500" :
-                                  order.Status.ToLower() == "approved" ? "text-green-600" :
-                                  order.Status.ToLower() == "cancelled" ? "text-red-500" : "text-gray-600")">
-                                @order.Status
-                            </span>
-                            
+            <div class="text-center text-gray-600 text-lg mt-20">
+                You have no orders yet.
+            </div>
+        }
+        else
+        {
+            <div class="grid grid-cols-4 font-semibold text-lg border-b-2 border-gray-800 pb-2 mb-4">
+                <div></div>
+                <div class="text-left">Laptop</div>
+                <div class="text-center">Date</div>
+                <div class="text-center">Status</div>
+            </div>
 
-                            @if (order.Status.ToLower() != "pickup")
+            var index = 1;
+
+            foreach (var order in Model)
+            {
+                <div class="border-2 border-green-600 rounded-lg p-6 mb-8 bg-white shadow-md">
+                    @foreach (var laptop in order.Laptops)
+                    {
+                        <div class="grid grid-cols-4 items-center gap-6 mb-6">
+                            <div class="text-center text-lg font-medium">@index</div>
+                            <div class="flex items-center gap-4">
+                                <img src="@Url.Content("~/" + laptop.ImgUrl)" alt="@laptop.Model" class="w-16 h-16 object-cover rounded-lg shadow-sm" />
+                                <div>
+                                    <div class="font-semibold">@laptop.Brand @laptop.Model</div>
+                                    <p class="text-sm text-gray-600">@laptop.Description</p>
+                                </div>
+                            </div>
+                            <div class="text-center text-sm text-gray-700">
+                                <div><span class="font-bold">Order:</span> @order.OrderDate.ToString("dd/MM/yyyy")</div>
+                            </div>
+                            <div class="text-center">
+                                <span class="block font-semibold text-lg
+                                    @(order.Status.ToLower() == "pending" ? "text-yellow-500" :
+                                      order.Status.ToLower() == "approved" ? "text-green-600" :
+                                      order.Status.ToLower() == "cancelled" ? "text-red-500" : "text-gray-600")">
+                                    @order.Status
+                                </span>
+
+                                @if (order.Status.ToLower() != "pickup")
                                 {
                                     <form method="post" asp-controller="Home" asp-action="CancelOrder" class="mt-2">
                                         <input type="hidden" name="orderId" value="@order.OrderId" />
@@ -65,19 +68,20 @@
                                         </button>
                                     </form>
                                 }
+                            </div>
                         </div>
-                    </div>
-                    index++;
-                }
+                        index++;
+                    }
 
-                <div class="text-right mt-4 text-lg font-semibold text-gray-800">
-                    Total: R @order.TotalAmount
+                    <div class="text-right mt-4 text-lg font-semibold text-gray-800">
+                        Total: R @order.TotalAmount
+                    </div>
                 </div>
-            </div>
+            }
         }
-    }
-</div>
+    
+
+    @Html.Partial("footer")
+
 </body>
-<div class="mt-20">
-        @Html.Partial("footer")
-</div>
+</html>

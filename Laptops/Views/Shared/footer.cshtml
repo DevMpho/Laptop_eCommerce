@@ -1,72 +1,94 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mint Footer UI</title>
     <style>
-        body {
-          margin: 0;
-          font-family: Arial, sans-serif;
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
         }
+
+        main {
+            flex: 1; /* Fills available space to push footer down */
+        }
+
         .footer {
-          background-color: #243C7A;
-          color: white;
-          padding: 40px 20px 20px;
+            background-color: #243C7A;
+            color: white;
+            padding: 40px 20px 20px;
         }
+
         .footer-container {
-          display: flex;
-          justify-content: space-between;
-          flex-wrap: wrap;
-          max-width: 1200px;
-          margin: auto;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: auto;
         }
+
         .footer h4 {
-          color: #89C146;
+            color: #89C146;
         }
+
         .footer p, .footer a {
-          font-size: 14px;
-          color: white;
-          text-decoration: none;
+            font-size: 14px;
+            color: white;
+            text-decoration: none;
         }
-        .footer a:hover {
-          text-decoration: underline;
-        }
+
+            .footer a:hover {
+                text-decoration: underline;
+            }
+
         .footer-links ul {
-          list-style: none;
-          padding: 0;
+            list-style: none;
+            padding: 0;
         }
+
         .footer-links li {
-          margin-bottom: 6px;
+            margin-bottom: 6px;
         }
+
         .footer-bottom {
-          text-align: center;
-          margin-top: 30px;
-          border-top: 1px solid #89C146;
-          padding-top: 10px;
-          font-size: 13px;
+            text-align: center;
+            margin-top: 30px;
+            border-top: 1px solid #89C146;
+            padding-top: 10px;
+            font-size: 13px;
         }
+
         .social-icons {
-          margin-top: 15px;
+            margin-top: 15px;
         }
-        .social-icons a {
-          margin-right: 10px;
-          color: white;
-          font-size: 20px;
-        }
+
+            .social-icons a {
+                margin-right: 10px;
+                color: white;
+                font-size: 20px;
+            }
+
         .footer-brand img {
-          width: 150px;
-          margin-bottom: 10px;
+            width: 150px;
+            margin-bottom: 10px;
         }
     </style>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
 </head>
 <body>
+
+    <main>
+        <!-- Your page content here -->
+    </main>
 
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-brand">
-                <img src="~/images/logo.webp" alt="Mint Logo">
+                <img src="~/images/logo.webp" alt="Mint Logo" />
                 <p>Empowering Mint employees with top-tier devices.</p>
                 <div class="social-icons">
                     <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
