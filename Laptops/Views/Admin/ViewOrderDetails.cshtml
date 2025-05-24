@@ -1,0 +1,84 @@
+﻿@model Laptops.Models.OrderDetailsViewModel
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+@{
+    var statuses = new Dictionary<int, string> {
+        {1, "Pending"},
+        {2, "Processing"},
+        {3, "Approved"},
+        {4, "Pickup"}
+    };
+}
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+@Html.Partial("_MspNavBar")
+
+<div class="max-w-5xl mx-auto px-4 py-8">
+    <h2 class="text-2xl font-bold mb-6">Order Details - #@Model.OrderId</h2>
+
+    <!-- Employee Details -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h3 class="text-xl font-semibold mb-4 text-gray-800">Employee Info</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><strong>Name:</strong> @Model.EmployeeName</div>
+            <div><strong>Email:</strong> @Model.Email</div>
+            <div><strong>Contact Number:</strong> @Model.ContactNumber</div>
+        </div>
+    </div>
+
+    <!-- Order Details -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h3 class="text-xl font-semibold mb-4 text-gray-800">Order Info</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><strong>Order Date:</strong> @Model.OrderDate.ToString("yyyy-MM-dd")</div>
+            <div>
+                <strong>Status:</strong>
+                <select class="border border-gray-300 rounded px-2 py-1"
+                        onchange="updateStatus(@Model.OrderId, this.value)">
+                    @foreach (var status in statuses)
+                    {
+                        var isSelected = Model.OrderStatusId == status.Key ? "selected" : "";
+                        <option value="@status.Key" selected="@isSelected">@status.Value</option>
+                    }
+                </select>
+            </div>
+
+            <div><strong>Total Amount:</strong> R @Model.TotalAmount</div>
+        </div>
+    </div>
+
+    <!-- Laptop(s) Details -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-xl font-semibold mb-4 text-gray-800">Laptops in this Order</h3>
+        @if (Model.Laptops != null && Model.Laptops.Count > 0)
+        {
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                @foreach (var laptop in Model.Laptops)
+                {
+                    <div class="border rounded-lg p-4 shadow">
+                        <img src="@Url.Content("~/" + laptop.ImgUrl)" alt="@laptop.Model"
+                             class="w-full h-36 object-contain mb-4 rounded" />
+                        <div><strong>Brand:</strong> @laptop.Brand</div>
+                        <div><strong>Model:</strong> @laptop.Model</div>
+                        <div><strong>Storage:</strong> @laptop.Storage</div>
+                        <div><strong>RAM:</strong> @laptop.Ram</div>
+                        <div><strong>Screen Size:</strong> @laptop.ScreenSize</div>
+                        <div><strong>Color:</strong> @laptop.Color</div>
+                        <div><strong>Battery Life:</strong> @laptop.BatteryLife hours</div>
+                        <div><strong>Price:</strong> R @laptop.Price</div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-gray-500">No laptops linked to this order.</p>
+        }
+    </div>
+</div>
