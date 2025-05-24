@@ -92,7 +92,7 @@ namespace Laptops.Controllers
         {
             if (choice == "msp")
             {
-                return RedirectToAction("MSPOrders", "Home");
+                return RedirectToAction("Orders", "Admin");
             }
 
             return RedirectToAction("Display", "Laptops");
