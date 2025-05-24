@@ -29,6 +29,17 @@ namespace Laptops.Controllers
 
             return View("AllOrders", orders);
         }
+        public IActionResult ViewOrderDetails(int orderId)
+        {
+            var orderDetails = _helper.GetOrderDetailsByIdAsync(orderId).GetAwaiter().GetResult();
+
+            if (orderDetails == null)
+            {
+                return NotFound();
+            }
+
+            return View(orderDetails);
+        }
 
     }
 }
