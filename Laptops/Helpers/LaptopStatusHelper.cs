@@ -184,7 +184,7 @@ namespace Laptops.Helpers
             {
                 var orders = await _context.Orders
                     .Include(o => o.OrderStatus)
-                    .Include(o => o.Employee) // Assuming you have an Employee navigation property
+                    .Include(o => o.Employee) 
                     .OrderBy(o => o.order_date)
 
                     .ToListAsync();
@@ -245,6 +245,74 @@ namespace Laptops.Helpers
             }
         }
 
+        public async Task<OrderDetailsViewModel?> GetOrderDetailsByIdAsync(int orderId)
+        {
+            try
+            {
+                var order = await _context.Orders
+                    .Include(o => o.OrderStatus)
+                    .Include(o => o.Employee)
+                    .FirstOrDefaultAsync(o => o.order_id == orderId);
+
+                if (order == null)
+                {
+                    _logger.LogWarning("⚠️ Order with ID {OrderId} not found.", orderId);
+                    return null;
+                }
+
+                // Get related CartItems
+                var cartItems = await _context.CartItems
+                    .Where(ci => ci.status_id == 2 && ci.order_id == orderId)
+                    .ToListAsync();
+
+                var laptopIds = cartItems.Select(ci => ci.laptops_id).Distinct().ToList();
+
+                // Get laptops with their laptop_details
+                var laptops = await _context.Laptops
+                    .Where(l => laptopIds.Contains(l.laptops_id))
+                    .Include(l => l.LaptopDetails) // Assuming navigation property exists
+                    .ToListAsync();
+
+                var laptopViewModels = laptops.Select(l => new LaptopViewModel
+                {
+                    LaptopId = l.laptops_id,
+                    Price = l.price,
+                    ImgUrl = l.imgUrl,
+                    Brand = l.LaptopDetails?.brand,
+                    Model = l.LaptopDetails?.model,
+                    Storage = l.LaptopDetails?.storage,
+                    Ram = l.LaptopDetails?.ram,
+                    ScreenSize = l.screensize,
+                    Description = l.description,
+                    Color = l.color,
+                    BatteryLife = l.batteryLife,
+                    Role = l.LaptopDetails?.role,
+                    OrderId = orderId,
+                    IsInCart = true,
+                    userLaptopStatus = 1
+                }).ToList();
+
+                var result = new OrderDetailsViewModel
+                {
+                    OrderId = order.order_id,
+                    OrderDate = order.order_date,
+                    TotalAmount = order.total_amount,
+                    OrderStatusId = order.OrderStatus.order_status_id,
+                    Status = order.OrderStatus?.status_name ?? "Unknown",
+                    EmployeeName = order.Employee?.firstname ?? "N/A", 
+                    Email = order.Employee?.Email ?? "N/A",
+                    ContactNumber = order.Employee.contactnumber, 
+                    Laptops = laptopViewModels
+                };
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "❌ Error fetching order details for Order ID {OrderId}.", orderId);
+                return null;
+            }
+        }
 
 
     }
