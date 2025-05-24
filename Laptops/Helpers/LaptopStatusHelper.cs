@@ -176,5 +176,76 @@ namespace Laptops.Helpers
 
             return orders;
         }
+
+        //msp orders 
+        public async Task<List<OrderViewModel>> GetAllOrdersAsync()
+        {
+            try
+            {
+                var orders = await _context.Orders
+                    .Include(o => o.OrderStatus)
+                    .Include(o => o.Employee) // Assuming you have an Employee navigation property
+                    .OrderBy(o => o.order_date)
+
+                    .ToListAsync();
+
+                // Get all related CartItems for these orders
+                var orderIds = orders.Select(o => o.order_id).ToList();
+                var cartItems = await _context.CartItems
+                    .Where(ci => ci.status_id == 2 && ci.order_id != null && orderIds.Contains(ci.order_id.Value))
+                    .ToListAsync();
+
+                // Optionally get all laptops
+                var laptopIds = cartItems.Select(ci => ci.laptops_id).Distinct().ToList();
+                var laptops = await _context.Laptops
+                    .Where(l => laptopIds.Contains(l.laptops_id))
+                    .ToListAsync();
+
+                var laptopViewModels = laptops.Select(l => new LaptopViewModel
+                {
+                    LaptopId = l.laptops_id,
+                    
+                    Price = l.price,
+                    // Add more fields as needed
+                }).ToList();
+
+                var result = new List<OrderViewModel>();
+
+                foreach (var order in orders)
+                {
+                    var viewModel = new OrderViewModel
+                    {
+                        OrderId = order.order_id,
+                        OrderDate = order.order_date,
+                        TotalAmount = order.total_amount,
+                        Status = order.OrderStatus.status_name,
+                        Email = order.Employee?.Email ?? "N/A",
+
+                        // if exists
+                        Laptops = new List<LaptopViewModel>()
+                    };
+
+                    var laptopsInOrder = cartItems
+                        .Where(ci => ci.order_id == order.order_id)
+                        .Select(ci => ci.laptops_id);
+
+                    viewModel.Laptops = laptopViewModels
+                        .Where(lvm => laptopsInOrder.Contains(lvm.LaptopId))
+                        .ToList();
+
+                    result.Add(viewModel);
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "❌ Error fetching all orders for admin.");
+                return new List<OrderViewModel>();
+            }
+        }
+
+
+
     }
 }
