@@ -14,36 +14,36 @@
     <h2 class="text-2xl font-bold text-gray-800 mb-6">@ViewData["Title"]</h2>
 
     <!-- Filters Centered -->
-    <form class="flex flex-wrap gap-4 mb-6 items-end justify-center">
+    <form method="get" action="@Url.Action("Orders", "Admin")" class="flex flex-wrap gap-4 mb-6 items-end justify-center">
         <!-- Order Status Filter -->
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Order Status</label>
-            <select class="w-48 border-gray-300 rounded-md shadow-sm">
-                <option>All</option>
-                <option>Pending</option>
-                <option>Processing</option>
-                <option>Approved</option>
-                <option>Pickup</option>
+            <select name="orderStatus" class="w-48 border-gray-300 rounded-md shadow-sm" onchange="this.form.submit()">
+                <option value="All">All</option>
+                <option value="Pending">Pending</option>
+                <option value="Processing">Processing</option>
+                <option value="Approved">Approved</option>
+                <option value="Pickup">Pickup</option>
             </select>
         </div>
 
         <!-- Payment Status Filter -->
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Payment Status</label>
-            <select class="w-48 border-gray-300 rounded-md shadow-sm">
-                <option>All</option>
-                <option>Not Paid</option>
-                <option>Paid</option>
+            <select name="paymentStatus" class="w-48 border-gray-300 rounded-md shadow-sm" onchange="this.form.submit()">
+                <option value="All">All</option>
+                <option value="Not Paid">Not Paid</option>
+                <option value="Paid">Paid</option>
             </select>
         </div>
 
         <!-- Sort by Date Filter -->
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Sort by Date</label>
-            <select class="w-48 border-gray-300 rounded-md shadow-sm">
-                <option>All</option>
-                <option>Newest</option>
-                <option>Oldest</option>
+            <select name="sortBy" class="w-48 border-gray-300 rounded-md shadow-sm" onchange="this.form.submit()">
+                <option value="All">All</option>
+                <option value="Newest">Newest</option>
+                <option value="Oldest">Oldest</option>
             </select>
         </div>
     </form>
@@ -78,7 +78,11 @@
                             <td class="px-6 py-4 text-sm text-blue-600 font-semibold">@order.Status</td>
                             <td class="px-6 py-4 text-sm text-gray-700">@order.Email</td>
                             <td class="px-6 py-4 text-sm text-green-700 font-medium">R @order.TotalAmount</td>
-                            <td class="px-6 py-4 text-sm text-red-600 font-semibold">Not Paid</td>
+                            <td class="px-6 py-4 text-sm">
+                                <span class="@(string.IsNullOrEmpty(order.PaymentStatus) || !order.PaymentStatus.Equals("Paid", StringComparison.OrdinalIgnoreCase) ? "text-red-600 font-semibold" : "text-green-600 font-semibold")">
+                                    @(string.IsNullOrEmpty(order.PaymentStatus) || !order.PaymentStatus.Equals("Paid", StringComparison.OrdinalIgnoreCase) ? "Not Paid" : "Paid")
+                                </span>
+                            </td>
                         </tr>
                     }
                 }
@@ -87,9 +91,44 @@
         </table>
     </div>
 </div>
+
+<!-- JavaScript to maintain selected values -->
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Set selected values based on current filter values
+        var orderStatusSelect = document.querySelector('select[name="orderStatus"]');
+        var paymentStatusSelect = document.querySelector('select[name="paymentStatus"]');
+        var sortBySelect = document.querySelector('select[name="sortBy"]');
+
+    @if (ViewBag.CurrentOrderStatus != null)
+    {
+        <text>
+                    if (orderStatusSelect) {
+                        orderStatusSelect.value = '@ViewBag.CurrentOrderStatus';
+                    }
+        </text>
+    }
+
+    @if (ViewBag.CurrentPaymentStatus != null)
+    {
+        <text>
+                    if (paymentStatusSelect) {
+                        paymentStatusSelect.value = '@ViewBag.CurrentPaymentStatus';
+                    }
+        </text>
+    }
+
+    @if (ViewBag.CurrentSortBy != null)
+    {
+        <text>
+                    if (sortBySelect) {
+                        sortBySelect.value = '@ViewBag.CurrentSortBy';
+                    }
+        </text>
+    }
+        });
+
     function redirectToDetails(orderId) {
         window.location.href = `/Admin/ViewOrderDetails?orderId=${orderId}`;
     }
 </script>
-
