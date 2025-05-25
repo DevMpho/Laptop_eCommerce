@@ -5,7 +5,7 @@
     var email = context?.Session.GetString("Email") ?? "Not logged in";
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
-    bool isOnMspOrdersPage = currentController == "Home" && currentAction == "MSPOrders";
+    bool isOnMspOrdersPage = currentController == "Admin" && currentAction == "Orders";
 }
 
 <header class="fixed top-0 left-0 right-0 bg-[#5c7f6b] px-6 py-3 z-50 shadow-md">
@@ -13,7 +13,7 @@
 
     <div class="flex items-center justify-between">
         <!-- Logo -->
-        <a href="@Url.Action("MSPOrders", "Home")" class="flex items-center space-x-2">
+        <a href="@Url.Action("AOrders", "Admin")" class="flex items-center space-x-2">
             <img src="/images/logo.webp" alt="mint logo" class="h-14 w-32" />
         </a>
 
@@ -26,7 +26,11 @@
         <div class="hidden md:flex items-center space-x-6 text-white text-sm">
             @if (!isOnMspOrdersPage)
             {
-                <a asp-controller="Home" asp-action="MSPOrders" class="hover:text-green-300 transition">Orders</a>
+                <a asp-controller="Admin" asp-action="Orders"
+                   class="text-white font-semibold hover:text-green-400 transition-colors duration-200 ease-in-out px-4 py-2 rounded hover:bg-white/10">
+                    Orders
+                </a>
+
             }
 
             @if (initials != "NA")
