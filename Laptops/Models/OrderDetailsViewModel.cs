@@ -9,6 +9,9 @@
         public int OrderStatusId { get; set; }
         public string Status { get; set; } = string.Empty; // From OrderStatus table
 
+        public int NewStatusId { get; set; }
+
+
         // Employee info
         public string EmployeeName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;

@@ -82,3 +82,31 @@
         }
     </div>
 </div>
+@Html.AntiForgeryToken()
+<script>
+        function updateStatus(orderId, newStatusId) {
+        fetch(`/Admin/UpdateOrderStatus`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify({
+                orderId: orderId,
+                newStatusId: parseInt(newStatusId) // ensure it's a number
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                // show success message, keep the selected value as is
+                alert("Order status updated successfully!");
+                // No reload needed here
+            } else {
+                alert("Failed to update order status.");
+            }
+        })
+        .catch(() => {
+            alert("Error updating order status.");
+        });
+    }
+</script>

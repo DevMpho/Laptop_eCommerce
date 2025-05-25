@@ -1,18 +1,22 @@
 ﻿using Laptops.Helpers;
 using Laptops.Models;
+using Laptops.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace Laptops.Controllers
 {
     public class AdminController : Controller
     {
         private readonly LaptopStatusHelper _helper;
+        private readonly ApplicationDbContext _context; // ✅ Add this line
 
-        public AdminController(LaptopStatusHelper helper)
+        public AdminController(LaptopStatusHelper helper, ApplicationDbContext context)
         {
             _helper = helper;
+            _context = context;  // ✅ Initialize the context from the helper
         }
 
         public async Task<IActionResult> Orders(string orderStatus = "All", string paymentStatus = "All", string sortBy = "All")
@@ -92,6 +96,22 @@ namespace Laptops.Controllers
                 return NotFound();
             }
             return View(orderDetails);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult UpdateOrderStatus([FromBody] OrderStatusUpdateRequest request)
+        {
+            var order = _context.Orders.FirstOrDefault(o => o.order_id == request.OrderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            order.order_status_id = request.NewStatusId;
+            _context.SaveChanges();
+
+            return Ok();
         }
     }
 }
