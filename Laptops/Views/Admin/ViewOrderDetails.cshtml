@@ -56,37 +56,60 @@
                 </div>
             </div>
 
-            <!-- Laptop(s) Details -->
-            <div class="bg-white rounded-lg shadow p-6">
-                <h3 class="text-xl font-semibold mb-4 text-gray-800">Laptops in this Order</h3>
-                @if (Model.Laptops != null && Model.Laptops.Count > 0)
+    <!-- Laptop(s) Details -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-xl font-semibold mb-4 text-gray-800">Laptops in this Order</h3>
+        @if (Model.Laptops != null && Model.Laptops.Count > 0)
+        {
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                @foreach (var laptop in Model.Laptops)
                 {
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        @foreach (var laptop in Model.Laptops)
-                        {
-                            <div class="border rounded-lg p-4 shadow">
-                                <img src="@Url.Content("~/" + laptop.ImgUrl)" alt="@laptop.Model"
-                                     class="w-full h-36 object-contain mb-4 rounded" />
-                                <div><strong>Brand:</strong> @laptop.Brand</div>
-                                <div><strong>Model:</strong> @laptop.Model</div>
-                                <div><strong>Storage:</strong> @laptop.Storage</div>
-                                <div><strong>RAM:</strong> @laptop.Ram</div>
-                                <div><strong>Screen Size:</strong> @laptop.ScreenSize</div>
-                                <div><strong>Color:</strong> @laptop.Color</div>
-                                <div><strong>Battery Life:</strong> @laptop.BatteryLife hours</div>
-                                <div><strong>Price:</strong> R @laptop.Price</div>
-                            </div>
-                        }
+                    <div class="border rounded-lg p-4 shadow">
+                        <img src="@Url.Content("~/" + laptop.ImgUrl)" alt="@laptop.Model"
+                             class="w-full h-36 object-contain mb-4 rounded" />
+                        <div><strong>Brand:</strong> @laptop.Brand</div>
+                        <div><strong>Model:</strong> @laptop.Model</div>
+                        <div><strong>Storage:</strong> @laptop.Storage</div>
+                        <div><strong>RAM:</strong> @laptop.Ram</div>
+                        <div><strong>Screen Size:</strong> @laptop.ScreenSize</div>
+                        <div><strong>Color:</strong> @laptop.Color</div>
+                        <div><strong>Battery Life:</strong> @laptop.BatteryLife hours</div>
+                        <div><strong>Price:</strong> R @laptop.Price</div>
                     </div>
                 }
-                else
-                {
-                    <p class="text-gray-500">No laptops linked to this order.</p>
-                }
             </div>
-        </div>
-    </main>
-
-
-    @Html.Partial("_mspFooter")
-</body>
+        }
+        else
+        {
+            <p class="text-gray-500">No laptops linked to this order.</p>
+        }
+    </div>
+</div>
+@Html.AntiForgeryToken()
+<script>
+        function updateStatus(orderId, newStatusId) {
+        fetch(`/Admin/UpdateOrderStatus`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify({
+                orderId: orderId,
+                newStatusId: parseInt(newStatusId) // ensure it's a number
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                // show success message, keep the selected value as is
+                alert("Order status updated successfully!");
+                // No reload needed here
+            } else {
+                alert("Failed to update order status.");
+            }
+        })
+        .catch(() => {
+            alert("Error updating order status.");
+        });
+    }
+</script>
