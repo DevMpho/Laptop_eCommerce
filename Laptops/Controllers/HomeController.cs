@@ -35,10 +35,19 @@ namespace Laptops.Controllers
 
         public async Task<IActionResult> Orders()
         {
-            var laptops = await _laptopService.GetLaptopsAsync(); // Fetch the cached laptops
-            var orders = await _laptopStatusHelper.GetUserOrdersAsync(laptops); // Pass the laptops to the method
+            var employeeIdStr = HttpContext.Session.GetString("EmployeeId");
+
+            if (int.TryParse(employeeIdStr, out int employeeId))
+            {
+                _laptopStatusHelper.ClearEmployeeOrderCache(employeeId);
+                _logger.LogInformation("✅ Cache cleared for employee ID: {employeeId}", employeeId);
+            }
+
+            var laptops = await _laptopService.GetLaptopsAsync(); // Fetch laptops (from cache or db)
+            var orders = await _laptopStatusHelper.GetUserOrdersAsync(laptops); // Get fresh orders
             return View(orders);
         }
+
 
 
 

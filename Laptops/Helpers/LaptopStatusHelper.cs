@@ -135,6 +135,7 @@ namespace Laptops.Helpers
             _cache.Remove(GetCacheKey(employeeId));
         }
 
+        //Orders for user.
         public async Task<List<OrderViewModel>> GetUserOrdersAsync(List<LaptopViewModel> laptops)
         {
             _logger.LogInformation("➡️ Entered GetUserOrdersAsync");
@@ -176,6 +177,12 @@ namespace Laptops.Helpers
 
             return orders;
         }
+        public void ClearEmployeeOrderCache(int employeeId)
+        {
+            string cacheKey = GetCacheKey(employeeId);
+            _cache.Remove(cacheKey);
+        }
+
 
         //msp orders 
         public async Task<List<OrderViewModel>> GetAllOrdersAsync()
@@ -270,7 +277,7 @@ namespace Laptops.Helpers
                 // Get laptops with their laptop_details
                 var laptops = await _context.Laptops
                     .Where(l => laptopIds.Contains(l.laptops_id))
-                    .Include(l => l.LaptopDetails) // Assuming navigation property exists
+                    .Include(l => l.LaptopDetails) 
                     .ToListAsync();
 
                 var laptopViewModels = laptops.Select(l => new LaptopViewModel
