@@ -45,8 +45,7 @@ public class CartController : Controller
         {
             laptops_id = laptopId,
             employeecart_id = cart.employeecart_id,
-            status_id = 1, 
-           
+            status_id = 1,
         };
 
         _context.CartItems.Add(cartItem);
@@ -60,7 +59,6 @@ public class CartController : Controller
             return Json(new { success = true });
         else
             return Json(new { success = false, message = "Could not update laptop status." });
-        
     }
 
     [HttpGet]
@@ -148,7 +146,6 @@ public class CartController : Controller
         return PartialView("_CartSidebar", updatedCartItems);
     }
     [HttpPost]
-    
     public async Task<IActionResult> Orders(int totalAmount)
     {
         var employeeIdStr = HttpContext.Session.GetString("EmployeeId");
@@ -196,7 +193,9 @@ public class CartController : Controller
 
     //MSP orders
 
-   
+
 
 
 }
+
+
