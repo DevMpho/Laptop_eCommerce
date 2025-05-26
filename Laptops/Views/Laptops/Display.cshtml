@@ -281,7 +281,7 @@
     </div>
 
     <script>
-             document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", () => {
             const brandFilter = document.getElementById("brandFilter");
             const ramFilter = document.getElementById("ramFilter");
             const roleFilter = document.getElementById("roleFilter");
@@ -306,12 +306,10 @@
             const modalRole = document.getElementById("modalRole");
             const modalRoleIcon = document.getElementById("modalRoleIcon");
 
-            const viewButtons = document.querySelectorAll(".view-details-btn"); // <-- Added here
+            const viewButtons = document.querySelectorAll(".view-details-btn");
+            const addToCartBtn = document.getElementById('addToCartBtn');
 
             function filterAndSort() {
-                // Debug log
-                console.log("Filtering and sorting...");
-
                 const brand = brandFilter.value.toLowerCase();
                 const ram = ramFilter.value.toLowerCase();
                 const role = roleFilter.value.toLowerCase();
@@ -338,7 +336,6 @@
                     card.style.display = (matchesBrand && matchesRam && matchesSearch && matchesRole) ? "block" : "none";
                 });
 
-                // Sorting
                 const container = document.querySelector(".grid");
                 let sorted = [...sortedCards].filter(card => card.style.display !== "none");
 
@@ -357,7 +354,7 @@
                         break;
                 }
 
-                sorted.forEach(card => container.appendChild(card)); // Reorder DOM
+                sorted.forEach(card => container.appendChild(card));
             }
 
             brandFilter.addEventListener("change", filterAndSort);
@@ -366,8 +363,6 @@
             sortSelect.addEventListener("change", filterAndSort);
             searchInput.addEventListener("input", filterAndSort);
 
-            // Modal logic
-            const addToCartBtn = document.getElementById('addToCartBtn');
             viewButtons.forEach(btn => {
                 btn.addEventListener("click", () => {
                     const card = btn.closest(".laptop-card");
@@ -381,10 +376,10 @@
                     modalDescription.textContent = card.dataset.description;
                     modalPrice.textContent = card.dataset.price;
                     firstThumb.src = "/" + card.dataset.imgurl;
+
                     const laptopId = card.dataset.laptopid;
                     addToCartBtn.setAttribute('data-laptop-id', laptopId);
-
-                    card.id = 'laptop-card+'+laptopId;
+                    card.id = 'laptop-card+' + laptopId;
 
                     if (card.dataset.existsincart === 'True') {
                         addToCartBtn.disabled = true;
@@ -399,13 +394,10 @@
                         addToCartBtn.className = "text-center bg-green-600 text-white py-2 rounded-md font-semibold hover:bg-green-700 flex items-center justify-center gap-2";
                     }
 
-                    // ✅ Set Role and Icon
                     const role = card.dataset.role;
                     modalRole.textContent = role;
 
-                    let iconClass = "";
-                    let colorClass = "";
-
+                    let iconClass = "", colorClass = "";
                     switch (role.toLowerCase()) {
                         case "gamer":
                             iconClass = "fas fa-gamepad";
@@ -427,64 +419,52 @@
                             iconClass = "fas fa-laptop";
                             colorClass = "text-gray-400";
                     }
-
                     modalRoleIcon.className = `${iconClass} ${colorClass} mr-2`;
-
                     modal.classList.remove("hidden");
                 });
             });
 
-            closeModal.addEventListener("click", () => {
-                modal.classList.add("hidden");
-            });
-
+            closeModal.addEventListener("click", () => modal.classList.add("hidden"));
             window.addEventListener("click", (e) => {
                 if (e.target === modal) {
                     modal.classList.add("hidden");
                 }
             });
 
-            // Thumbnail click to update main image
             document.querySelectorAll(".thumbnail-img").forEach(thumb => {
                 thumb.addEventListener("click", function () {
                     modalMainImage.src = this.src;
                 });
             });
-        });
-         
 
-        // add to cart
-        addToCartBtn.addEventListener('click', function () {
-            const laptopId = this.getAttribute('data-laptop-id');
+            // ✅ Add to cart logic
+            addToCartBtn.addEventListener('click', function () {
+                const laptopId = this.getAttribute('data-laptop-id');
+                if (!laptopId) {
+                    alert("Laptop ID is missing.");
+                    return;
+                }
 
-            if (!laptopId) {
-                alert("Laptop ID is missing.");
-                return;
-            }
+                const button = this;
+                const originalText = button.textContent;
+                button.textContent = "Adding...";
+                button.disabled = true;
 
-            const button = this;
-            const originalText = button.textContent;
-            button.textContent = "Adding...";
-            button.disabled = true;
-
-            fetch(`/Cart/AddToCart?laptopId=${laptopId}`, {
-                method: 'POST'
-            })
+                fetch(`/Cart/AddToCart?laptopId=${laptopId}`, {
+                    method: 'POST'
+                })
                 .then(res => {
                     if (res.ok) {
                         updateCartCount();
-                        // Wait 1 second before changing to "Added"
+
                         setTimeout(() => {
                             button.textContent = "Already In Cart";
                             button.style.backgroundColor = 'grey';
                             button.style.cursor = 'not-allowed';
                             button.disabled = true;
 
-                            // Disable item from being to cart again
-                            const card = document.getElementById('laptop-card+' + laptopId);
-                            if (card) {
-                                card.setAttribute('data-existsincart', 'True');
-                            }
+                            // ✅ Update the main card
+                            markLaptopAsInCart(laptopId);
                         }, 1000);
                     } else {
                         button.textContent = "Failed";
@@ -501,28 +481,29 @@
                         button.disabled = false;
                     }, 2000);
                 });
-        });
+            });
+
             function markLaptopAsInCart(laptopId) {
-            const card = document.querySelector(`[data-laptopid="${laptopId}"]`)?.closest('.laptop-card');
-            const button = document.querySelector(`.view-details-btn[data-laptopid="${laptopId}"]`);
+                const card = document.getElementById('laptop-card+' + laptopId) || document.querySelector(`[data-laptopid="${laptopId}"]`)?.closest('.laptop-card');
 
-            if (button) {
-                const disabledButton = document.createElement('button');
-                disabledButton.textContent = 'Already In Cart';
-                disabledButton.className = 'group mt-4 mx-auto block w-40 text-center text-white px-5 py-2.5 rounded-full';
-                disabledButton.style.backgroundColor = 'grey';
-                disabledButton.style.cursor = 'not-allowed';
-                disabledButton.disabled = true;
+                if (!card) return;
 
-                button.replaceWith(disabledButton);
-            }
+                card.setAttribute('data-existsincart', 'True');
 
-            // Optional: visually dim the card
-            if (card) {
+                const viewButton = card.querySelector('.view-details-btn');
+                if (viewButton) {
+                    const disabledButton = document.createElement('button');
+                    disabledButton.textContent = 'Already In Cart';
+                    disabledButton.className = 'group mt-4 mx-auto block w-40 text-center text-white px-5 py-2.5 rounded-full bg-gray-400 cursor-not-allowed';
+                    disabledButton.disabled = true;
+                    viewButton.replaceWith(disabledButton);
+                }
+
                 card.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
             }
-        }
+        });
     </script>
+
 
 
 </body>
