@@ -2,8 +2,6 @@
 
 @{
     ViewData["Title"] = "Order Details";
-}
-@{
     var statuses = new Dictionary<int, string> {
         {1, "Pending"},
         {2, "Processing"},
@@ -11,86 +9,165 @@
         {4, "Pickup"}
     };
 }
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        
+    </style>
 </head>
 
-<body class="font-sans">
+<body class="bg-gradient-to-tr from-blue-50 to-green-50 font-sans text-gray-800 min-h-screen">
     @Html.Partial("_MspNavBar")
 
-    <main class="min-h-screen flex flex-col">
-        <div class="max-w-5xl mx-auto px-4 py-8 mt-[80px]">
-            <h2 class="text-2xl font-bold mb-6">Order Details - #@Model.OrderId</h2>
+    <main class=" pb-12 px-4 md:px-8 mt-[100px] mb-[20px]">
+        <div class="max-w-6xl mx-auto space-y-10">
+            
+            <h2 class="text-4xl font-extrabold text-blue-800 border-b-4 border-blue-200 pb-2">
+                Order #@Model.OrderId
+            </h2>
 
-            <!-- Employee Details -->
-            <div class="bg-white rounded-lg shadow p-6 mb-6">
-                <h3 class="text-xl font-semibold mb-4 text-gray-800">Employee Info</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><strong>Name:</strong> @Model.EmployeeName</div>
-                    <div><strong>Email:</strong> @Model.Email</div>
-                    <div><strong>Contact Number:</strong> @Model.ContactNumber</div>
-                </div>
+            <div class="flex justify-end mt-2 mb-4 print:hidden">
+                <button onclick="window.print()"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow transition duration-200">
+                    🖨️ Print Order
+                </button>
             </div>
 
-            <!-- Order Details -->
-            <div class="bg-white rounded-lg shadow p-6 mb-6">
-                <h3 class="text-xl font-semibold mb-4 text-gray-800">Order Info</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><strong>Order Date:</strong> @Model.OrderDate.ToString("yyyy-MM-dd")</div>
+            <!-- Employee Details -->
+            <section class="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-green-400">
+                <h3 class="text-2xl font-bold text-green-700 mb-4">👤 Employee Info</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-lg">
+                    <div><span class="text-gray-500">Name:</span> <span class="font-semibold text-gray-900">@Model.EmployeeName</span></div>
+                    <div><span class="text-gray-500">Email:</span> <span class="font-semibold text-gray-900">@Model.Email</span></div>
+                    <div><span class="text-gray-500">Contact:</span> <span class="font-semibold text-gray-900">@Model.ContactNumber</span></div>
+                </div>
+            </section>
+
+            <!-- Order Info -->
+            <section class="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-blue-400">
+                <h3 class="text-2xl font-bold text-blue-700 mb-4">📦 Order Info</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-lg">
+                    <div><span class="text-gray-500">Date:</span> <span class="font-semibold text-gray-900">@Model.OrderDate.ToString("yyyy-MM-dd")</span></div>
                     <div>
-                        <strong>Status:</strong>
-                        <select class="border border-gray-300 rounded px-2 py-1"
+                        <span class="text-gray-500">Status:</span>
+                        <select class="mt-1 w-full border border-gray-300 rounded px-3 py-2 bg-gray-100 text-gray-800 font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 onchange="updateStatus(@Model.OrderId, this.value)">
                             @foreach (var status in statuses)
                             {
-                                var isSelected = Model.OrderStatusId == status.Key ? "selected" : "";
-                                <option value="@status.Key" selected="@isSelected">@status.Value</option>
+                                var selected = Model.OrderStatusId == status.Key ? "selected" : "";
+                                @Html.Raw($"<option value='{status.Key}' {selected}>{status.Value}</option>")
                             }
                         </select>
                     </div>
-
-                    <div><strong>Total Amount:</strong> R @Model.TotalAmount</div>
+                    <div><span class="text-gray-500">Total:</span> <span class="font-semibold text-green-700">R @Model.TotalAmount</span></div>
                 </div>
-            </div>
+            </section>
 
-    <!-- Laptop(s) Details -->
-    <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-xl font-semibold mb-4 text-gray-800">Laptops in this Order</h3>
-        @if (Model.Laptops != null && Model.Laptops.Count > 0)
-        {
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                @foreach (var laptop in Model.Laptops)
+            <!-- Laptops List -->
+            <section class="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-yellow-400">
+                <h3 class="text-2xl font-bold text-yellow-600 mb-4">💻 Laptops</h3>
+                @if (Model.Laptops != null && Model.Laptops.Count > 0)
                 {
-                    <div class="border rounded-lg p-4 shadow">
-                        <img src="@Url.Content("~/" + laptop.ImgUrl)" alt="@laptop.Model"
-                             class="w-full h-36 object-contain mb-4 rounded" />
-                        <div><strong>Brand:</strong> @laptop.Brand</div>
-                        <div><strong>Model:</strong> @laptop.Model</div>
-                        <div><strong>Storage:</strong> @laptop.Storage</div>
-                        <div><strong>RAM:</strong> @laptop.Ram</div>
-                        <div><strong>Screen Size:</strong> @laptop.ScreenSize</div>
-                        <div><strong>Color:</strong> @laptop.Color</div>
-                        <div><strong>Battery Life:</strong> @laptop.BatteryLife hours</div>
-                        <div><strong>Price:</strong> R @laptop.Price</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @foreach (var laptop in Model.Laptops)
+                        {
+                            <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 shadow hover:shadow-lg transition-all duration-200">
+                                <img src="@Url.Content("~/" + laptop.ImgUrl)" alt="@laptop.Model"
+                                     class="w-full h-40 object-contain mb-4 rounded" />
+                                <ul class="text-sm space-y-1 text-gray-700">
+                                    <li><strong>Brand:</strong> @laptop.Brand</li>
+                                    <li><strong>Model:</strong> @laptop.Model</li>
+                                    <li><strong>Storage:</strong> @laptop.Storage</li>
+                                    <li><strong>RAM:</strong> @laptop.Ram</li>
+                                    <li><strong>Screen:</strong> @laptop.ScreenSize</li>
+                                    <li><strong>Color:</strong> @laptop.Color</li>
+                                    <li><strong>Battery:</strong> @laptop.BatteryLife hours</li>
+                                    <li><strong>Price:</strong> R @laptop.Price</li>
+                                </ul>
+                            </div>
+                        }
                     </div>
                 }
+                else
+                {
+                    <p class="text-gray-500 italic">No laptops linked to this order.</p>
+                }
+            </section>
+
+            <!-- Popup -->
+            <div id="popup-overlay" class="popup-overlay hidden" onclick="closePopup()"></div>
+            <div id="popup" class="popup bg-white rounded-xl shadow-2xl p-6 max-w-sm w-full mx-4 hidden">
+                <div class="flex items-center mb-4">
+                    <div id="popup-icon" class="mr-3 flex-shrink-0"></div>
+                    <h3 id="popup-title" class="text-lg font-bold text-gray-900"></h3>
+                </div>
+                <p id="popup-message" class="text-gray-600 mb-4"></p>
+                <button onclick="closePopup()" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200">
+                    OK
+                </button>
             </div>
-        }
-        else
-        {
-            <p class="text-gray-500">No laptops linked to this order.</p>
-        }
-    </div>
-</div>
-@Html.Partial("_mspFooter")
-</main>
+        </div>
+    </main>
+
+    @Html.Partial("_mspFooter")
 </body>
+
 @Html.AntiForgeryToken()
+
 <script>
-        function updateStatus(orderId, newStatusId) {
+    function showPopup(title, message, isSuccess = true) {
+        const popup = document.getElementById('popup');
+        const overlay = document.getElementById('popup-overlay');
+        const titleEl = document.getElementById('popup-title');
+        const messageEl = document.getElementById('popup-message');
+        const iconEl = document.getElementById('popup-icon');
+
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+
+        iconEl.innerHTML = isSuccess ? `
+            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>` :
+            `<div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </div>`;
+
+        overlay.classList.remove('hidden');
+        popup.classList.remove('hidden');
+    }
+
+    function closePopup() {
+        document.getElementById('popup').classList.add('hidden');
+        document.getElementById('popup-overlay').classList.add('hidden');
+    }
+
+    function updateStatus(orderId, newStatusId) {
         fetch(`/Admin/UpdateOrderStatus`, {
             method: 'POST',
             headers: {
@@ -99,20 +176,18 @@
             },
             body: JSON.stringify({
                 orderId: orderId,
-                newStatusId: parseInt(newStatusId) // ensure it's a number
+                newStatusId: parseInt(newStatusId)
             })
         })
         .then(response => {
             if (response.ok) {
-                // show success message, keep the selected value as is
-                alert("Order status updated successfully!");
-                // No reload needed here
+                showPopup('Success!', 'Order status updated successfully!', true);
             } else {
-                alert("Failed to update order status.");
+                showPopup('Error', 'Failed to update order status.', false);
             }
         })
         .catch(() => {
-            alert("Error updating order status.");
+            showPopup('Error', 'Error updating order status.', false);
         });
     }
 </script>
