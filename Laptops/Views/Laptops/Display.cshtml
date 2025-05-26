@@ -18,7 +18,7 @@
     }
 
     <!--Hero Section-->
-    <div class="bg-gradient-to-b from-[#1F44BB] via-[#EEF3FF] to-white py-20">
+    <div class="bg-gradient-to-b from-[#1F44BB] via-[#EEF3FF] to-white py-20 mt-[80px] mb-[20px]">
         <div class="flex flex-col md:flex-row items-center justify-center px-6 md:px-16 py-10 gap-10">
             <!-- Left Column -->
             <div class="md:w-1/2 text-center md:text-left space-y-6">
@@ -138,8 +138,8 @@
 @foreach (var laptop in Model)
 {
     var status = statusMap.ContainsKey(laptop.LaptopId) ? statusMap[laptop.LaptopId] : 0;
-    var isGreyedOut = status == 1 || status == 2 || status == 3;
-    var statusText = status == 2 ? "Already ordered" : status == 3 ? "Reserved by another user" : status == 1 ? "Already In cart": "";
+    var isGreyedOut =  status == 2 || status == 3;
+    var statusText = status == 2 ? "Already ordered" : status == 3 ? "Reserved by another user" : "";
     var cardClasses = isGreyedOut ? "opacity-50 cursor-not-allowed pointer-events-none" : "";
     
     <div class="bg-white rounded-xl border shadow-md p-4 text-center laptop-card @cardClasses"
@@ -162,17 +162,28 @@
         <h3 class="text-base font-medium text-gray-800">@laptop.Brand @laptop.Model</h3>
         <p class="text-lg font-bold text-blue-700 mt-1">R @laptop.Price</p>
 
-        @if (!string.IsNullOrEmpty(statusText))
-        {
-            <p class="text-sm font-semibold text-red-600 mt-2">@statusText</p>
-        }
-        else
-        {
-            <button class="group mt-4 mx-auto block w-40 text-center bg-[#73AC4B] text-white px-5 py-2.5 rounded-full view-details-btn hover:bg-blue-800 transition-all duration-300">
-                View Details
-                <i class="fas fa-arrow-right ml-2 transform transition-transform duration-300 group-hover:translate-x-1"></i>
-            </button>
-        }
+                    @if (!string.IsNullOrEmpty(statusText))
+                    {
+                        <p class="text-sm font-semibold text-red-600 mt-2">@statusText</p>
+                    }
+                    else if (status == 1)
+                    {
+                        <button class="group mt-4 mx-auto block w-40 text-center text-white px-5 py-2.5 rounded-full"
+                                style="background-color: grey; cursor: not-allowed;"
+                                disabled>
+                            Already In Cart
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="group mt-4 mx-auto block w-40 text-center bg-[#73AC4B] text-white px-5 py-2.5 rounded-full view-details-btn hover:bg-blue-800 transition-all duration-300"
+                                data-laptopid="@laptop.LaptopId">
+                            View Details
+                            <i class="fas fa-arrow-right ml-2 transform transition-transform duration-300 group-hover:translate-x-1"></i>
+                        </button>
+
+                    }
+
     </div>
 }
 
@@ -491,6 +502,26 @@
                     }, 2000);
                 });
         });
+            function markLaptopAsInCart(laptopId) {
+            const card = document.querySelector(`[data-laptopid="${laptopId}"]`)?.closest('.laptop-card');
+            const button = document.querySelector(`.view-details-btn[data-laptopid="${laptopId}"]`);
+
+            if (button) {
+                const disabledButton = document.createElement('button');
+                disabledButton.textContent = 'Already In Cart';
+                disabledButton.className = 'group mt-4 mx-auto block w-40 text-center text-white px-5 py-2.5 rounded-full';
+                disabledButton.style.backgroundColor = 'grey';
+                disabledButton.style.cursor = 'not-allowed';
+                disabledButton.disabled = true;
+
+                button.replaceWith(disabledButton);
+            }
+
+            // Optional: visually dim the card
+            if (card) {
+                card.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+            }
+        }
     </script>
 
 

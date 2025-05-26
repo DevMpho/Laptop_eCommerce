@@ -20,81 +20,10 @@ namespace Laptops.Controllers
 
         }
 
-
-
-        public IActionResult LaptopDetails()
-        {
-            return View();
-            
-        }
         public IActionResult ContactUs()
         {
             return View();
 
-        }
-
-        
-        public IActionResult MSPOrders()
-        {
-            return View();
-
-        }
-        public IActionResult Login()
-        {
-            return View();
-        }
-        
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-        public IActionResult ShoppingCart()
-        {
-            var cart = new ShoppingCart
-            {
-                Products = new List<Product2>
-                {
-                    new Product2
-                    {
-                        Name = "Dell",
-                        Description = "Intel Core i5, 8GB RAM, 512GB SSD",
-                        Price = 999.99m,
-                        ImageUrl = "/images/dell.jpg"
-                    },
-                    new Product2
-                    {
-                        Name = "Lenovo Legion",
-                        Description = "AMD Ryzen 5, 16GB RAM, 1TB SSD",
-                        Price = 1199.99m,
-                        ImageUrl = "/images/legion1.jpg"
-                    }
-                }
-            };
-
-            return View(cart);
-        }
-
-        public IActionResult UserDetails()
-        {
-            /*var user = new UserDetails
-            {
-                Name = "Mahlatsi Sekele",
-                Email = "mahlatsi.sekele@mintgroup.net",
-                PhoneNumber = "0828616927",
-                PurchaseDate = new DateTime(2025, 01, 31),
-                PaymentStatus = "Paid",
-                PurchaseStatus = "Approved",
-                OrderNumber = "NO3",
-                Model = "HP Pavilion 15",
-                Processor = "Intel Core i7",
-                RAM = "16GB DDR4",
-                Storage = "512GB SSD",
-                Graphics = "Intel Iris Xe",
-                OperatingSystem = "Windows 11"
-            };*/
-
-            return View(); // This looks for Views/Home/LaptopDetails.cshtml
         }
         [HttpPost]
         public async Task<IActionResult> CancelOrder(int orderId, int laptopId)
@@ -106,10 +35,19 @@ namespace Laptops.Controllers
 
         public async Task<IActionResult> Orders()
         {
-            var laptops = await _laptopService.GetLaptopsAsync(); // Fetch the cached laptops
-            var orders = await _laptopStatusHelper.GetUserOrdersAsync(laptops); // Pass the laptops to the method
+            var employeeIdStr = HttpContext.Session.GetString("EmployeeId");
+
+            if (int.TryParse(employeeIdStr, out int employeeId))
+            {
+                _laptopStatusHelper.ClearEmployeeOrderCache(employeeId);
+                _logger.LogInformation("✅ Cache cleared for employee ID: {employeeId}", employeeId);
+            }
+
+            var laptops = await _laptopService.GetLaptopsAsync(); // Fetch laptops (from cache or db)
+            var orders = await _laptopStatusHelper.GetUserOrdersAsync(laptops); // Get fresh orders
             return View(orders);
         }
+
 
 
 

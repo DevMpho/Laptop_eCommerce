@@ -1,6 +1,7 @@
 ﻿using Laptops.Data;
 using Laptops.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System.Linq;
 
 namespace Laptops.Controllers
@@ -8,11 +9,19 @@ namespace Laptops.Controllers
     public class AccountController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMemoryCache _cache;
 
-        public AccountController(ApplicationDbContext context)
+
+        public AccountController(ApplicationDbContext context, IMemoryCache cache)
         {
             _context = context;
+            _cache = cache;
         }
+        private string GetCacheKey(int employeeId)
+        {
+            return $"orders_{employeeId}";
+        }
+
 
         public IActionResult Login()
         {
@@ -73,12 +82,20 @@ namespace Laptops.Controllers
 
         public IActionResult Logout()
         {
-            // Clear all session data
+            // Get employee ID from session before clearing
+            var employeeIdStr = HttpContext.Session.GetString("EmployeeId");
+
+            if (int.TryParse(employeeIdStr, out int employeeId))
+            {
+                string cacheKey = GetCacheKey(employeeId);  // Use same cache key method from your orders service
+                _cache.Remove(cacheKey);                      // Remove cached orders for this employee
+            }
+
             HttpContext.Session.Clear();
 
-            // Redirect to login page
             return RedirectToAction("Login");
         }
+
 
         [HttpGet]
         public IActionResult MspLogin()
